@@ -6,6 +6,7 @@ export const EquipmentStatusEnum = z.enum([
   "AVAILABLE", // 空闲
   "OCCUPIED", // 占用
   "MAINTENANCE", // 维修中
+  "SCRAP_REQUESTED", // 报废申请中
   "SCRAPPED", // 已报废
 ]);
 
