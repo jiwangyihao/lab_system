@@ -10,6 +10,7 @@ interface SidebarProps {
 
 interface NavItem {
   title: string;
+  titleByRole?: Record<string, string>; // 根据角色显示不同标题
   href: string;
   icon: React.ReactNode;
   roles?: string[]; // 如果未定义，则所有角色可见
@@ -61,7 +62,15 @@ const navItems: NavItem[] = [
         <path d="M12 6a4 4 0 0 0-4 4c0 1.654 1.015 3.192 2.494 4.36.558.44 1.506 1.01 1.506 2.39V18a4 4 0 0 0 4-4c0-1.654-1.015-3.192-2.494-4.36C12.948 9.2 12 8.63 12 7.25V6z" />
       </svg>
     ),
-    roles: ["ADMIN", "HEAD"],
+    // 管理员显示"设备管理"，借用人员显示"可用设备"
+    titleByRole: {
+      ADMIN: "设备管理",
+      HEAD: "设备管理",
+      TEACHER: "可用设备",
+      STUDENT: "可用设备",
+      OUTSIDER: "可用设备",
+    },
+    roles: undefined, // 所有角色可见设备列表
   },
   {
     title: "预约管理",
@@ -272,7 +281,7 @@ export function Sidebar({ userRole }: SidebarProps) {
               )}
             >
               {item.icon}
-              {item.title}
+              {item.titleByRole?.[userRole] || item.title}
             </Link>
           );
         })}
