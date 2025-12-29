@@ -36,32 +36,33 @@ export interface EquipmentFormData {
   maintenanceCycle: number | null;
 }
 
+// 状态选项
+const statusOptions: { value: EquipmentStatus; label: string }[] = [
+  { value: "AVAILABLE", label: "空闲" },
+  { value: "OCCUPIED", label: "占用" },
+  { value: "MAINTENANCE", label: "维修中" },
+  { value: "SCRAP_REQUESTED", label: "报废申请中" },
+  { value: "SCRAPPED", label: "已报废" },
+];
+
 interface EquipmentFormProps {
   mode: "create" | "edit";
   defaultValues?: Partial<EquipmentFormData>;
   onSubmit: (data: EquipmentFormData) => Promise<void>;
   isLoading?: boolean;
+  userRole?: string;
 }
-
-const statusOptions: { value: EquipmentStatus; label: string }[] = [
-  { value: "AVAILABLE", label: "空闲" },
-  { value: "OCCUPIED", label: "占用" },
-  { value: "MAINTENANCE", label: "维修中" },
-  { value: "SCRAPPED", label: "已报废" },
-];
-
-// ========== 设备表单组件 ==========
 
 export function EquipmentForm({
   mode,
   defaultValues,
   onSubmit,
   isLoading = false,
+  userRole,
 }: EquipmentFormProps) {
+  // 表单状态
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
-
-  // 表单状态
   const [formData, setFormData] = React.useState<EquipmentFormData>({
     id: defaultValues?.id,
     name: defaultValues?.name ?? "",
@@ -72,6 +73,9 @@ export function EquipmentForm({
     rentalPrice: defaultValues?.rentalPrice ?? 0,
     maintenanceCycle: defaultValues?.maintenanceCycle ?? null,
   });
+
+  // Determine if status is editable (only HEAD can edit status)
+  const isStatusEditable = userRole === "HEAD";
 
   const updateField = <K extends keyof EquipmentFormData>(
     field: K,
@@ -221,6 +225,7 @@ export function EquipmentForm({
               onValueChange={(value) =>
                 updateField("status", value as EquipmentStatus)
               }
+              disabled={!isStatusEditable && mode === "edit"} // Disable if not HEAD and in edit mode
             >
               <SelectTrigger>
                 <span>
@@ -238,6 +243,11 @@ export function EquipmentForm({
             </Select>
             {errors.status && (
               <p className="text-sm text-destructive">{errors.status}</p>
+            )}
+            {!isStatusEditable && mode === "edit" && (
+              <p className="text-xs text-muted-foreground">
+                仅实验室负责人可修改设备状态
+              </p>
             )}
           </div>
 

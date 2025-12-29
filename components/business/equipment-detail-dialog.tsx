@@ -46,6 +46,7 @@ const statusConfig: Record<
   AVAILABLE: { label: "空闲", variant: "default" },
   OCCUPIED: { label: "占用", variant: "secondary" },
   MAINTENANCE: { label: "维修中", variant: "outline" },
+  SCRAP_REQUESTED: { label: "报废申请中", variant: "outline" },
   SCRAPPED: { label: "已报废", variant: "destructive" },
 };
 

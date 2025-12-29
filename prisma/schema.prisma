@@ -26,6 +26,8 @@ model User {
   reservations Reservation[]
   checkIns     CheckIn[]
   incidents    Incident[]
+  purchaseRequests PurchaseRequest[]
+  scrapRequests    ScrapRequest[]
 }
 
 enum Role {
@@ -78,13 +80,15 @@ model Equipment {
   reservations    Reservation[]
   timeSlots       EquipmentTimeSlot[]
   checkIns        CheckIn[]
+  scrapRequests   ScrapRequest[]
 }
 
 enum EquipmentStatus {
-  AVAILABLE    // 空闲
-  OCCUPIED     // 占用
-  MAINTENANCE  // 维修中
-  SCRAPPED     // 已报废
+  AVAILABLE       // 空闲
+  OCCUPIED        // 占用
+  MAINTENANCE     // 维修中
+  SCRAP_REQUESTED // 报废申请中 (新增)
+  SCRAPPED        // 已报废
 }
 
 model EquipmentTimeSlot {
@@ -215,4 +219,39 @@ model Report {
   periodEnd    DateTime
   contentJson  Json
   generatedAt  DateTime @default(now())
+}
+
+// ========== 负责人管理模块 (Phase 4) ==========
+enum RequestStatus {
+  PENDING   // 待审批
+  APPROVED  // 已通过
+  REJECTED  // 已驳回
+}
+
+model PurchaseRequest {
+  id            String        @id @default(cuid())
+  applicantId   String
+  applicant     User          @relation(fields: [applicantId], references: [id])
+  name          String
+  model         String
+  quantity      Int
+  budget        Float
+  reason        String
+  status        RequestStatus @default(PENDING)
+  rejectReason  String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model ScrapRequest {
+  id            String        @id @default(cuid())
+  equipmentId   String
+  equipment     Equipment     @relation(fields: [equipmentId], references: [id])
+  applicantId   String
+  applicant     User          @relation(fields: [applicantId], references: [id])
+  reason        String
+  status        RequestStatus @default(PENDING)
+  rejectReason  String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }

@@ -89,10 +89,10 @@ export async function getEquipmentsAction(
       where.status = status;
     }
 
-    // 排除已报废设备（除非明确筛选）
-    if (!status) {
-      where.status = { not: "SCRAPPED" };
-    }
+    // 排除已报废设备（除非明确筛选） - 用户反馈希望看到报废设备，暂取消默认隐藏
+    // if (!status) {
+    //   where.status = { not: "SCRAPPED" };
+    // }
 
     // 构建排序
     const orderBy = sortBy ? { [sortBy]: sortOrder } : { name: "asc" as const };
@@ -344,9 +344,10 @@ export async function deleteEquipmentAction(id: string): Promise<ActionResult> {
 
 // 状态机：定义有效的状态转换
 const validTransitions: Record<EquipmentStatus, EquipmentStatus[]> = {
-  AVAILABLE: ["OCCUPIED", "MAINTENANCE", "SCRAPPED"],
-  OCCUPIED: ["AVAILABLE", "MAINTENANCE"],
-  MAINTENANCE: ["AVAILABLE", "SCRAPPED"],
+  AVAILABLE: ["OCCUPIED", "MAINTENANCE", "SCRAP_REQUESTED", "SCRAPPED"],
+  OCCUPIED: ["AVAILABLE", "MAINTENANCE", "SCRAP_REQUESTED"],
+  MAINTENANCE: ["AVAILABLE", "SCRAP_REQUESTED", "SCRAPPED"],
+  SCRAP_REQUESTED: ["AVAILABLE", "SCRAPPED"], // 申请被拒回 AVAILABLE，通过变 SCRAPPED
   SCRAPPED: [], // 已报废设备不可恢复
 };
 
@@ -431,6 +432,7 @@ function getStatusLabel(status: EquipmentStatus): string {
     AVAILABLE: "空闲",
     OCCUPIED: "占用",
     MAINTENANCE: "维修中",
+    SCRAP_REQUESTED: "报废申请中",
     SCRAPPED: "已报废",
   };
   return labels[status] || status;
