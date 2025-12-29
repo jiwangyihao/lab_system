@@ -1,0 +1,35 @@
+﻿
+> lab_system@0.1.0 build C:\Users\34404\Documents\GitHub\SP&PP\lab_system
+> next build
+
+鈻?Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+node.exe : 鈿?The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: htt
+ps://nextjs.org/docs/messages/middleware-to-proxy
+所在位置 C:\nvm4w\nodejs\pnpm.ps1:16 字符: 5
++     & "$basedir/node$exe"  "$basedir/node_modules/corepack/dist/pnpm. ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (鈿?The "middlewa...leware-to-proxy:String) [], RemoteExcept 
+   ion
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+鉁?Compiled successfully in 4.6s
+  Running TypeScript ...
+Failed to compile.
+
+./app/(dashboard)/layout.tsx:19:54
+Type error: Property 'username' does not exist on type 'User'.
+
+[0m [90m 17 |[39m   }
+ [90m 18 |[39m
+[31m[1m>[22m[39m[90m 19 |[39m   [36mconst[39m userName [33m=[39m session[33m.[39muser[33m.
+[39mname [33m||[39m session[33m.[39muser[33m.[39musername [33m||[39m [32m"鐢ㄦ埛"[39m[33m;[39m
+ [90m    |[39m                                                      [31m[1m^[22m[39m
+ [90m 20 |[39m   [36mconst[39m userRole [33m=[39m session[33m.[39muser[33m.[39mrole [33m||[3
+9m [32m"STUDENT"[39m[33m;[39m
+ [90m 21 |[39m
+ [90m 22 |[39m   [36mreturn[39m ([0m
+Next.js build worker exited with code: 1 and signal: null
+鈥塃LIFECYCLE鈥?Command failed with exit code 1.

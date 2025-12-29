@@ -1,0 +1,50 @@
+﻿
+> lab_system@0.1.0 build C:\Users\34404\Documents\GitHub\SP&PP\lab_system
+> next build
+
+鈻?Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+node.exe : 鈿?The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: htt
+ps://nextjs.org/docs/messages/middleware-to-proxy
+所在位置 C:\nvm4w\nodejs\pnpm.ps1:16 字符: 5
++     & "$basedir/node$exe"  "$basedir/node_modules/corepack/dist/pnpm. ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (鈿?The "middlewa...leware-to-proxy:String) [], RemoteExcept 
+   ion
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+鉁?Compiled successfully in 5.5s
+  Running TypeScript ...
+Failed to compile.
+
+./app/(auth)/login/page.tsx:27:27
+Type error: No overload matches this call.
+  Overload 1 of 4, '(schema: Zod3Type<{ username: string; password: string; }, { username: string; passw
+ord: string; }>, schemaOptions?: ParseParams | undefined, resolverOptions?: NonRawResolverOptions | unde
+fined): Resolver<...>', gave the following error.
+    Argument of type 'ZodObject<{ username: ZodString; password: ZodString; }, $strip>' is not assignabl
+e to parameter of type 'Zod3Type<{ username: string; password: string; }, { username: string; password: 
+string; }>'.
+      Types of property '_def' are incompatible.
+        Property 'typeName' is missing in type '$ZodObjectDef<{ username: ZodString; password: ZodString
+; }>' but required in type '{ typeName: string; }'.
+  Overload 2 of 4, '(schema: $ZodType<unknown, FieldValues, $ZodTypeInternals<unknown, FieldValues>>, sc
+hemaOptions?: ParseContext<$ZodIssue> | undefined, resolverOptions?: NonRawResolverOptions | undefined):
+ Resolver<...>', gave the following error.
+    Argument of type 'ZodObject<{ username: ZodString; password: ZodString; }, $strip>' is not assignabl
+e to parameter of type '$ZodType<unknown, FieldValues, $ZodTypeInternals<unknown, FieldValues>>'.
+      The types of '_zod.version.minor' are incompatible between these types.
+        Type '2' is not assignable to type '0'.
+
+[0m [90m 25 |[39m     formState[33m:[39m { errors }[33m,[39m
+ [90m 26 |[39m   } [33m=[39m useForm[33m<[39m[33mLoginFormData[39m[33m>[39m({
+[31m[1m>[22m[39m[90m 27 |[39m     resolver[33m:[39m zodResolver(loginSchema)[33m,[39m
+ [90m    |[39m                           [31m[1m^[22m[39m
+ [90m 28 |[39m   })[33m;[39m
+ [90m 29 |[39m
+ [90m 30 |[39m   [36mconst[39m onSubmit [33m=[39m [36masync[39m (data[33m:[39m [33mLoginFormD
+ata[39m) [33m=>[39m {[0m
+Next.js build worker exited with code: 1 and signal: null
+鈥塃LIFECYCLE鈥?Command failed with exit code 1.
