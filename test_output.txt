@@ -1,0 +1,459 @@
+﻿
+> lab_system@0.1.0 test C:\Users\34404\Documents\GitHub\SP&PP\lab_system
+> vitest "lib/actions/__tests__/auth.test.ts"
+
+
+[1m[44m DEV [49m[22m [34mv4.0.16 [39m[90mC:/Users/34404/Documents/GitHub/SP&PP/lab_system[39m
+
+node.exe : 
+所在位置 C:\nvm4w\nodejs\
+pnpm.ps1:16 字符: 5
++     & "$basedir/nod
+e$exe"  "$basedir/nod
+e_modules/corepack/di
+st/pnpm. ...
++     ~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (:String   
+ ) [], RemoteExce    
+ption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+[31m鈳幆鈳幆鈳幆[39m[
+1m[41m Failed Suites
+ 1 [49m[22m[31m鈳幆
+鈳幆鈳幆鈳?[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m [ lib/actions/__tes
+ts__/auth.test.ts ][
+22m
+[31m[1mError[22m: 
+Cannot find module 'C
+:\Users\34404\Documen
+ts\GitHub\SP&PP\lab_s
+ystem\node_modules\.p
+npm\next-auth@5.0.0-b
+eta.30_nex_93f1024d20
+c9969feb1d33700359867
+6\node_modules\next\s
+erver' imported from 
+C:\Users\34404\Docume
+nts\GitHub\SP&PP\lab_
+system\node_modules\.
+pnpm\next-auth@5.0.0-
+beta.30_nex_93f1024d2
+0c9969feb1d3370035986
+76\node_modules\next-
+auth\lib\env.js
+Did you mean to impor
+t "next/server.js"?[
+39m
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[1/1]鈳?[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 00:29:20
+[2m   Duration [22m 939ms[2m (transform 72ms, setup 89ms, import 0ms, tests 0ms, environment 591ms)[22m
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mlib/actions/__tests__/auth.test.ts [22m[34mx1 [34m[39m
+       [2m Filename pattern: [22m[34mlib/actions/__tests__/auth.test.ts[39m
+
+ [31m鉂?[39m lib/actions/__tests__/auth.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 6[2mms[22m[39m
+[31m       [31m脳[31m should register a student successfully[39m[32m 5[2mms[22m[39m
+[31m       [31m脳[31m should fail if username already exists[39m[32m 1[2mms[22m[39m
+
+[31m鈳幆鈳幆鈳幆鈳?[39m
+[1m[41m Failed Tests
+ 2 [49m[22m[31m鈳幆
+鈳幆鈳幆鈳?[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m > [22mAuth Actions
+[2m > [22mregisterA
+ction[2m > [22mshou
+ld register a student
+ successfully
+[31m[1mAssertionErr
+or[22m: expected fal
+se to be true // Obje
+ct.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m鉂?[22m lib/
+actions/__tests__/aut
+h.test.ts:[2m70:30[
+22m[39m
+    [90m 68| [39m  
+    [35mconst[39m r
+esult [33m=[39m [3
+5mawait[39m [34mreg
+isterAction[39m(form
+Data [35mas[39m any
+)[33m;[39m
+    [90m 69| [39m
+    [90m 70| [39m  
+    [34mexpect[39m(
+result[33m.[39msucc
+ess)[33m.[39m[34mt
+oBe[39m([35mtrue[3
+9m)[33m;[39m
+    [90m   | [39m  
+                     
+      [31m^[39m
+    [90m 71| [39m  
+    [34mexpect[39m(
+result[33m.[39mdata
+[33m?.[39muserId)[
+33m.[39m[34mtoBe[3
+9m([32m"user-123"[3
+9m)[33m;[39m
+    [90m 72| [39m  
+    [34mexpect[39m(
+bcrypt[33m.[39mhash
+)[33m.[39m[34mtoHa
+veBeenCalledWith[39m
+([32m"password123"[
+39m[33m,[39m [34m1
+0[39m)[33m;[39m
+
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[1/2]鈳?[22m[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m > [22mAuth Actions
+[2m > [22mregisterA
+ction[2m > [22mshou
+ld fail if username a
+lready exists
+[31m[1mAssertionErr
+or[22m: expected '鐢ㄦ
+埛鍚嶅凡琚崰鐢? to be '鐢ㄦ埛鍚
+嶅凡瀛樺湪' // Object.is e
+quality[39m
+
+Expected: [32m"鐢ㄦ埛鍚嶅
+凡[7m瀛樺湪[27m"[39m
+Received: [31m"鐢ㄦ埛鍚嶅
+凡[7m琚崰鐢?[27m"[39m
+
+[36m [2m鉂?[22m lib/
+actions/__tests__/aut
+h.test.ts:[2m98:30[
+22m[39m
+    [90m 96| [39m
+    [90m 97| [39m  
+    [34mexpect[39m(
+result[33m.[39msucc
+ess)[33m.[39m[34mt
+oBe[39m([35mfalse[
+39m)[33m;[39m
+    [90m 98| [39m  
+    [34mexpect[39m(
+result[33m.[39mmess
+age)[33m.[39m[34mt
+oBe[39m([32m"鐢ㄦ埛鍚嶅凡
+瀛樺湪"[39m)[33m;[39m
+    [90m   | [39m  
+                     
+      [31m^[39m
+    [90m 99| [39m  
+    [34mexpect[39m(
+prisma[33m.[39muser
+[33m.[39mcreate)[3
+3m.[39mnot[33m.[39
+m[34mtoHaveBeenCalle
+d[39m()[33m;[39m
+    [90m100| [39m  
+  })[33m;[39m
+
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[2/2]鈳?[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 00:32:14
+[2m   Duration [22m 122ms
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mlib/actions/__tests__/auth.test.ts [22m[34mx2 [34m[39m
+       [2m Filename pattern: [22m[34mlib/actions/__tests__/auth.test.ts[39m
+
+ [32m鉁?[39m lib/actions/__tests__/auth.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 00:34:09
+[2m   Duration [22m 212ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mlib/actions/__tests__/auth.test.ts [22m[34mx3 [34m[39m
+       [2m Filename pattern: [22m[34mlib/actions/__tests__/auth.test.ts[39m
+
+ [31m鉂?[39m lib/actions/__tests__/auth.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+       [32m鉁?[39m should register a student successfully[32m 4[2mms[22m[39m
+       [32m鉁?[39m should fail if username already exists[32m 1[2mms[22m[39m
+[31m       [31m脳[31m should update profile successfully[39m[32m 7[2mms[22m[39m
+[31m       [31m脳[31m should fail if not authenticated[39m[32m 4[2mms[22m[39m
+[31m       [31m脳[31m should change password successfully[39m[32m 3[2mms[22m[39m
+[31m       [31m脳[31m should fail if current password is wrong[39m[32m 2[2mms[22m[39m
+
+[31m鈳幆鈳幆鈳幆鈳?[39m
+[1m[41m Failed Tests
+ 4 [49m[22m[31m鈳幆
+鈳幆鈳幆鈳?[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m > [22mAuth Actions
+[2m > [22mupdatePro
+fileAction[2m > [22
+mshould update profil
+e successfully
+[31m[1mError[22m: 
+Cannot find module '@
+/lib/auth'
+Require stack:
+- C:\Users\34404\Docu
+ments\GitHub\SP&PP\la
+b_system\lib\actions\
+__tests__\auth.test.t
+s[39m
+[36m [2m鉂?[22m lib/
+actions/__tests__/aut
+h.test.ts:[2m110:8[
+22m[39m
+    [90m108| [39m
+    [90m109| [39m  
+    [90m// Mock auth
+ session[39m
+    [90m110| [39m  
+    ([34mrequire[39
+m([32m"@/lib/auth"[
+39m)[33m.[39mauth 
+[35mas[39m any)[33m
+.[39m[34mmockResolv
+edValue[39m({
+    [90m   | [39m  
+     [31m^[39m
+    [90m111| [39m  
+      user[33m:[39m
+ { id[33m:[39m [32
+m"user-123"[39m }[3
+3m,[39m
+    [90m112| [39m  
+    })[33m;[39m
+
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[1/4]鈳?[22m[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m > [22mAuth Actions
+[2m > [22mupdatePro
+fileAction[2m > [22
+mshould fail if not a
+uthenticated
+[31m[1mError[22m: 
+Cannot find module '@
+/lib/auth'
+Require stack:
+- C:\Users\34404\Docu
+ments\GitHub\SP&PP\la
+b_system\lib\actions\
+__tests__\auth.test.t
+s[39m
+[36m [2m鉂?[22m lib/
+actions/__tests__/aut
+h.test.ts:[2m126:8[
+22m[39m
+    [90m124| [39m
+    [90m125| [39m  
+  [34mit[39m([32m"
+should fail if not au
+thenticated"[39m[33
+m,[39m [35masync[3
+9m () [33m=>[39m {
+    [90m126| [39m  
+    ([34mrequire[39
+m([32m"@/lib/auth"[
+39m)[33m.[39mauth 
+[35mas[39m any)[33m
+.[39m[34mmockResolv
+edValue[39m([35mnul
+l[39m)[33m;[39m
+    [90m   | [39m  
+     [31m^[39m
+    [90m127| [39m  
+    [35mconst[39m r
+esult [33m=[39m [3
+5mawait[39m [34mreq
+uire[39m([32m"../au
+th"[39m)[33m.[39m
+[34mupdateProfileActi
+on[39m({})[33m;[39
+m
+    [90m128| [39m  
+    [34mexpect[39m(
+result[33m.[39msucc
+ess)[33m.[39m[34mt
+oBe[39m([35mfalse[
+39m)[33m;[39m
+
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[2/4]鈳?[22m[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m > [22mAuth Actions
+[2m > [22mchangePas
+swordAction[2m > [2
+2mshould change passw
+ord successfully
+[31m[1mError[22m: 
+Cannot find module '@
+/lib/auth'
+Require stack:
+- C:\Users\34404\Docu
+ments\GitHub\SP&PP\la
+b_system\lib\actions\
+__tests__\auth.test.t
+s[39m
+[36m [2m鉂?[22m lib/
+actions/__tests__/aut
+h.test.ts:[2m142:8[
+22m[39m
+    [90m140| [39m
+    [90m141| [39m  
+    [90m// Mock auth
+ session[39m
+    [90m142| [39m  
+    ([34mrequire[39
+m([32m"@/lib/auth"[
+39m)[33m.[39mauth 
+[35mas[39m any)[33m
+.[39m[34mmockResolv
+edValue[39m({
+    [90m   | [39m  
+     [31m^[39m
+    [90m143| [39m  
+      user[33m:[39m
+ { id[33m:[39m [32
+m"user-123"[39m }[3
+3m,[39m
+    [90m144| [39m  
+    })[33m;[39m
+
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[3/4]鈳?[22m[39m
+
+[41m[1m FAIL [22m
+[49m lib/actions/__te
+sts__/auth.test.ts[2
+m > [22mAuth Actions
+[2m > [22mchangePas
+swordAction[2m > [2
+2mshould fail if curr
+ent password is wrong
+[31m[1mError[22m: 
+Cannot find module '@
+/lib/auth'
+Require stack:
+- C:\Users\34404\Docu
+ments\GitHub\SP&PP\la
+b_system\lib\actions\
+__tests__\auth.test.t
+s[39m
+[36m [2m鉂?[22m lib/
+actions/__tests__/aut
+h.test.ts:[2m170:8[
+22m[39m
+    [90m168| [39m  
+    }[33m;[39m
+    [90m169| [39m
+    [90m170| [39m  
+    ([34mrequire[39
+m([32m"@/lib/auth"[
+39m)[33m.[39mauth 
+[35mas[39m any)[33m
+.[39m[34mmockResolv
+edValue[39m({
+    [90m   | [39m  
+     [31m^[39m
+    [90m171| [39m  
+      user[33m:[39m
+ { id[33m:[39m [32
+m"user-123"[39m }[3
+3m,[39m
+    [90m172| [39m  
+    })[33m;[39m
+
+[31m[2m鈳幆鈳幆鈳幆鈳幆
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆
+鈳幆[4/4]鈳?[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 00:40:21
+[2m   Duration [22m 240ms
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mlib/actions/__tests__/auth.test.ts [22m[34mx4 [34m[39m
+       [2m Filename pattern: [22m[34mlib/actions/__tests__/auth.test.ts[39m
+
+ [32m鉁?[39m lib/actions/__tests__/auth.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 00:41:48
+[2m   Duration [22m 195ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mlib/actions/__tests__/auth.test.ts [22m[34mx5 [34m[39m
+       [2m Filename pattern: [22m[34mlib/actions/__tests__/auth.test.ts[39m
+
+ [32m鉁?[39m lib/actions/__tests__/auth.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 00:43:17
+[2m   Duration [22m 214ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
