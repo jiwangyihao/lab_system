@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -180,14 +181,16 @@ export function Header({ userName, userRole }: HeaderProps) {
               }
             />
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                <div>
-                  <p className="font-medium">{userName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {ROLE_NAMES[userRole] || userRole}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>
+                  <div>
+                    <p className="font-medium">{userName}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {ROLE_NAMES[userRole] || userRole}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Link
