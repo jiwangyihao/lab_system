@@ -57,6 +57,7 @@ const statusConfig: Record<
   AVAILABLE: { label: "空闲", variant: "default" },
   OCCUPIED: { label: "占用", variant: "secondary" },
   MAINTENANCE: { label: "维修中", variant: "outline" },
+  SCRAP_REQUESTED: { label: "报废申请中", variant: "outline" },
   SCRAPPED: { label: "已报废", variant: "destructive" },
 };
 
@@ -248,40 +249,29 @@ export default function EquipmentListPage({
                   )}
                 </DropdownMenuGroup>
 
-                {/* 管理员专有操作：状态变更 */}
-                {pageConfig.isAdmin && currentStatus !== "SCRAPPED" && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      {currentStatus !== "AVAILABLE" && (
+                {/* 报废操作: ADMIN跳转申请，HEAD直接报废 */}
+                {(pageConfig.isAdmin || userRole === "HEAD") &&
+                  currentStatus !== "SCRAPPED" && (
+                    <>
+                      {(currentStatus === "AVAILABLE" ||
+                        currentStatus === "MAINTENANCE") && (
                         <DropdownMenuItem
-                          onClick={() =>
-                            handleStatusChange(equipment.id, "AVAILABLE")
-                          }
+                          onClick={() => {
+                            if (userRole === "HEAD") {
+                              handleStatusChange(equipment.id, "SCRAPPED");
+                            } else {
+                              router.push(
+                                `/dashboard/equipment/${equipment.id}/scrap`
+                              );
+                            }
+                          }}
+                          className="text-destructive"
                         >
-                          标记为空闲
+                          {userRole === "HEAD" ? "报废设备" : "申请报废"}
                         </DropdownMenuItem>
                       )}
-                      {currentStatus === "AVAILABLE" && (
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleStatusChange(equipment.id, "MAINTENANCE")
-                          }
-                        >
-                          标记为维修中
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleStatusChange(equipment.id, "SCRAPPED")
-                        }
-                        className="text-destructive"
-                      >
-                        报废设备
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </>
-                )}
+                    </>
+                  )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -300,11 +290,21 @@ export default function EquipmentListPage({
         </div>
 
         {/* 管理员才显示新增按钮 */}
-        {pageConfig.isAdmin && (
+        {/* HEAD允许直接新增设备，ADMIN/TEACHER跳转采购申请 */}
+        {userRole === "HEAD" ? (
           <Button onClick={() => router.push("/dashboard/equipment/new")}>
             <IconPlus className="mr-2 h-4 w-4" />
             新增设备
           </Button>
+        ) : (
+          (userRole === "ADMIN" || userRole === "TEACHER") && (
+            <Button
+              onClick={() => router.push("/dashboard/admin/purchase/new")}
+            >
+              <IconPlus className="mr-2 h-4 w-4" />
+              采购申请
+            </Button>
+          )
         )}
       </div>
 
