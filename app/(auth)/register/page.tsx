@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,22 +22,15 @@ import {
   registerSchema,
   type RegisterFormData,
 } from "@/lib/schemas/auth.schema";
-import { registerAction, getTeachersAction } from "@/lib/actions/auth";
+import { registerAction } from "@/lib/actions/auth";
 
 type RoleType = "STUDENT" | "TEACHER" | "OUTSIDER";
-
-interface Teacher {
-  id: string;
-  name: string;
-  department: string;
-}
 
 export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleType>("STUDENT");
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   const {
     register,
@@ -54,17 +47,6 @@ export default function RegisterPage() {
 
   // 监听角色变化
   const role = watch("role");
-
-  // 加载教师列表
-  useEffect(() => {
-    async function loadTeachers() {
-      const result = await getTeachersAction();
-      if (result.success && result.data) {
-        setTeachers(result.data);
-      }
-    }
-    loadTeachers();
-  }, []);
 
   const handleRoleChange = (value: RoleType) => {
     setSelectedRole(value);
@@ -115,7 +97,12 @@ export default function RegisterPage() {
               onValueChange={(value) => handleRoleChange(value as RoleType)}
             >
               <SelectTrigger>
-                <SelectValue>选择用户类型</SelectValue>
+                <SelectValue>
+                  {selectedRole === "STUDENT" && "学生"}
+                  {selectedRole === "TEACHER" && "教师"}
+                  {selectedRole === "OUTSIDER" && "校外人员"}
+                  {!selectedRole && "选择用户类型"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="STUDENT">学生</SelectItem>
@@ -265,40 +252,20 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="className">班级</Label>
-                  <Input
-                    id="className"
-                    type="text"
-                    placeholder="请输入班级"
-                    {...register("className" as any)}
-                    disabled={isLoading}
-                  />
-                  {(errors as any).className && (
-                    <p className="text-sm text-destructive">
-                      {(errors as any).className.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>导师 (选填)</Label>
-                  <Select
-                    onValueChange={(value) => setValue("tutorId" as any, value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue>选择导师</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teachers.map((teacher) => (
-                        <SelectItem key={teacher.id} value={teacher.id}>
-                          {teacher.name} ({teacher.department})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="className">班级</Label>
+                <Input
+                  id="className"
+                  type="text"
+                  placeholder="请输入班级"
+                  {...register("className" as any)}
+                  disabled={isLoading}
+                />
+                {(errors as any).className && (
+                  <p className="text-sm text-destructive">
+                    {(errors as any).className.message}
+                  </p>
+                )}
               </div>
             </>
           )}
