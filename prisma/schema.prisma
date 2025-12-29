@@ -1,0 +1,218 @@
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+// ========== 用户模块 ==========
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String
+  phone     String?
+  email     String?
+  role      Role     @default(STUDENT)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  student      Student?
+  teacher      Teacher?
+  outsider     Outsider?
+  reservations Reservation[]
+  checkIns     CheckIn[]
+  incidents    Incident[]
+}
+
+enum Role {
+  STUDENT   // 学生
+  TEACHER   // 教师
+  OUTSIDER  // 校外人员
+  ADMIN     // 设备管理员
+  HEAD      // 实验室负责人
+}
+
+model Student {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id])
+  studentNo String   @unique
+  major     String
+  className String
+  tutorId   String?
+  tutor     Teacher? @relation(fields: [tutorId], references: [userId])
+}
+
+model Teacher {
+  userId     String    @id
+  user       User      @relation(fields: [userId], references: [id])
+  teacherNo  String    @unique
+  title      String
+  department String
+  students   Student[]
+}
+
+model Outsider {
+  userId  String @id
+  user    User   @relation(fields: [userId], references: [id])
+  idCard  String
+  company String
+  balance Float  @default(0)
+}
+
+// ========== 设备模块 ==========
+model Equipment {
+  id              String          @id @default(cuid())
+  name            String
+  model           String
+  manufacturer    String
+  purchaseDate    DateTime
+  status          EquipmentStatus @default(AVAILABLE)
+  rentalPrice     Float           @default(0)
+  maintenanceCycle Int?           // 检修周期(天)
+
+  maintenanceLogs MaintenanceLog[]
+  reservations    Reservation[]
+  timeSlots       EquipmentTimeSlot[]
+  checkIns        CheckIn[]
+}
+
+enum EquipmentStatus {
+  AVAILABLE    // 空闲
+  OCCUPIED     // 占用
+  MAINTENANCE  // 维修中
+  SCRAPPED     // 已报废
+}
+
+model EquipmentTimeSlot {
+  id          String    @id @default(cuid())
+  equipmentId String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  dayOfWeek   Int?      // 0-6, null表示特定日期
+  specificDate DateTime? // 特定日期
+  startTime   String    // "08:00"
+  endTime     String    // "22:00"
+  isAvailable Boolean   @default(true)
+}
+
+model MaintenanceLog {
+  id          String    @id @default(cuid())
+  equipmentId String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  content     String
+  logDate     DateTime  @default(now())
+  operator    String
+}
+
+// ========== 预约模块 ==========
+model Reservation {
+  id           String            @id @default(cuid())
+  userId       String
+  user         User              @relation(fields: [userId], references: [id])
+  equipmentId  String
+  equipment    Equipment         @relation(fields: [equipmentId], references: [id])
+  startTime    DateTime
+  endTime      DateTime
+  usageDesc    String
+  status       ReservationStatus @default(PENDING_TEACHER)
+  rejectReason String?
+  createdAt    DateTime          @default(now())
+
+  payment  Payment?
+  checkIns CheckIn[]
+}
+
+enum ReservationStatus {
+  PENDING_TEACHER   // 待导师审批 (学生)
+  PENDING_ADMIN     // 待管理员审批
+  PENDING_HEAD      // 待负责人审批 (校外)
+  PENDING_PAYMENT   // 待缴费 (校外)
+  APPROVED          // 已批准
+  REJECTED          // 已驳回
+  CANCELLED         // 已撤销
+  IN_USE            // 使用中
+  COMPLETED         // 已完成
+}
+
+model Payment {
+  id            String      @id @default(cuid())
+  reservationId String      @unique
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  amount        Float
+  paidAt        DateTime?
+  method        String?
+  isRefunded    Boolean     @default(false)
+}
+
+// ========== 实验监管模块 ==========
+model CheckIn {
+  id            String       @id @default(cuid())
+  reservationId String
+  reservation   Reservation  @relation(fields: [reservationId], references: [id])
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  equipmentId   String
+  equipment     Equipment    @relation(fields: [equipmentId], references: [id])
+  checkInTime   DateTime?
+  checkOutTime  DateTime?
+  notes         String?
+}
+
+model Incident {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  equipmentId String?
+  title       String
+  description String
+  severity    String   // LOW, MEDIUM, HIGH
+  status      String   @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
+  createdAt   DateTime @default(now())
+}
+
+// ========== 系统设置模块 ==========
+model SystemConfig {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  desc  String?
+}
+
+model ExperimentPlan {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  targetUsers String?  // JSON: ["STUDENT", "TEACHER"]
+  createdAt   DateTime @default(now())
+}
+
+model Regulation {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   // Markdown
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model IpWhitelist {
+  id        String   @id @default(cuid())
+  ipAddress String
+  desc      String?
+  createdAt DateTime @default(now())
+}
+
+// ========== 报表模块 ==========
+model Report {
+  id           String   @id @default(cuid())
+  type         String   // WEEKLY, MONTHLY, YEARLY
+  periodStart  DateTime
+  periodEnd    DateTime
+  contentJson  Json
+  generatedAt  DateTime @default(now())
+}
