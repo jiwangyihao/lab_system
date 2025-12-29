@@ -96,7 +96,7 @@ const navItems: NavItem[] = [
   },
   {
     title: "审批中心",
-    href: "/dashboard/approval",
+    href: "/dashboard/admin/approval",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@ const navItems: NavItem[] = [
         <path d="m22 10-7 7-2.5-2.5" />
       </svg>
     ),
-    roles: ["TEACHER", "ADMIN", "HEAD"],
+    roles: ["ADMIN", "HEAD"],
   },
   {
     title: "我的学生",

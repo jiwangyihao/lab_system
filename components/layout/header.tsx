@@ -34,13 +34,13 @@ const mobileNavItems = [
   { title: "设备管理", href: "/dashboard/equipment", roles: ["ADMIN", "HEAD"] },
   { title: "预约管理", href: "/dashboard/reservation" },
   {
-    title: "审批中心",
-    href: "/dashboard/approval",
-    roles: ["TEACHER", "ADMIN", "HEAD"],
-  },
-  {
     title: "实验监管",
     href: "/dashboard/monitoring",
+    roles: ["ADMIN", "HEAD"],
+  },
+  {
+    title: "审批中心",
+    href: "/dashboard/admin/approval",
     roles: ["ADMIN", "HEAD"],
   },
   { title: "用户管理", href: "/dashboard/users", roles: ["ADMIN", "HEAD"] },
