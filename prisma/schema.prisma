@@ -200,7 +200,7 @@ model ExperimentPlan {
 model Regulation {
   id        String   @id @default(cuid())
   title     String
-  content   String   // Markdown
+  content   Json     // Nested Ordered List
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
