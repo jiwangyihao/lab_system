@@ -310,17 +310,17 @@ describe("Reservation Actions", () => {
       };
       (prisma.$transaction as any).mockImplementation((cb: any) => cb(mockTx));
 
-      await expect(createReservation(validReservationData)).rejects.toThrow(
-        "该时段已被预约"
-      );
+      const result = await createReservation(validReservationData);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("该时段已被预约");
     });
 
     it("未登录时应该抛出错误", async () => {
       (auth as any).mockResolvedValue(null);
 
-      await expect(createReservation(validReservationData)).rejects.toThrow(
-        "未登录"
-      );
+      const result = await createReservation(validReservationData);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("未登录");
     });
 
     it("学生未关联导师时应该抛出错误", async () => {
@@ -330,9 +330,9 @@ describe("Reservation Actions", () => {
         student: { tutorId: null },
       });
 
-      await expect(createReservation(validReservationData)).rejects.toThrow(
-        "学生未关联导师"
-      );
+      const result = await createReservation(validReservationData);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("学生未关联导师，无法申请");
     });
 
     it("开始时间晚于结束时间应该抛出错误", async () => {
@@ -344,9 +344,9 @@ describe("Reservation Actions", () => {
         endTime: "10:00",
       };
 
-      await expect(createReservation(invalidData)).rejects.toThrow(
-        "开始时间必须早于结束时间"
-      );
+      const result = await createReservation(invalidData);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("开始时间必须早于结束时间");
     });
   });
 
@@ -382,9 +382,9 @@ describe("Reservation Actions", () => {
         startTime: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours later
       });
 
-      await expect(cancelReservation(VALID_RESERVATION_ID)).rejects.toThrow(
-        "必须提前24小时以上撤销"
-      );
+      const result = await cancelReservation(VALID_RESERVATION_ID);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("必须提前24小时以上撤销");
     });
 
     it("管理员可以在24小时内取消", async () => {
@@ -434,9 +434,9 @@ describe("Reservation Actions", () => {
       });
       (prisma.reservation.findUnique as any).mockResolvedValue(mockReservation);
 
-      await expect(cancelReservation(VALID_RESERVATION_ID)).rejects.toThrow(
-        "无权操作"
-      );
+      const result = await cancelReservation(VALID_RESERVATION_ID);
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("无权操作");
     });
   });
 
