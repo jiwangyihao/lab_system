@@ -12,6 +12,8 @@ import {
   IconAlertCircle,
   IconEye,
   IconX,
+  IconLogin,
+  IconLogout,
 } from "@tabler/icons-react";
 import {
   Table,
@@ -33,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cancelReservation, confirmPayment } from "@/lib/actions/reservation";
+import { checkIn, checkOut } from "@/lib/actions/monitoring";
 import { IconCash } from "@tabler/icons-react";
 import {
   AlertDialog,
@@ -127,6 +130,30 @@ export function ReservationList({ data }: { data: ReservationDisplay[] }) {
     });
   };
 
+  const handleCheckIn = (id: string) => {
+    startTransition(async () => {
+      const result = await checkIn(id);
+      if (result.success) {
+        toast.success("签到成功", { description: "设备已标记为使用中" });
+        router.refresh();
+      } else {
+        toast.error("签到失败", { description: result.error });
+      }
+    });
+  };
+
+  const handleCheckOut = (id: string) => {
+    startTransition(async () => {
+      const result = await checkOut(id);
+      if (result.success) {
+        toast.success("签退成功", { description: "本次借用已结束" });
+        router.refresh();
+      } else {
+        toast.error("签退失败", { description: result.error });
+      }
+    });
+  };
+
   return (
     <>
       <div className="rounded-md border">
@@ -208,6 +235,32 @@ export function ReservationList({ data }: { data: ReservationDisplay[] }) {
                             <IconEye className="mr-2 h-4 w-4" />
                             查看详情
                           </DropdownMenuItem>
+
+                          {item.status === "APPROVED" && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-green-600 focus:text-green-600"
+                                onClick={() => handleCheckIn(item.id)}
+                              >
+                                <IconLogin className="mr-2 h-4 w-4" />
+                                签到使用
+                              </DropdownMenuItem>
+                            </>
+                          )}
+
+                          {item.status === "IN_USE" && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-orange-600 focus:text-orange-600"
+                                onClick={() => handleCheckOut(item.id)}
+                              >
+                                <IconLogout className="mr-2 h-4 w-4" />
+                                签退结束
+                              </DropdownMenuItem>
+                            </>
+                          )}
 
                           {item.status === "PENDING_PAYMENT" && (
                             <>
