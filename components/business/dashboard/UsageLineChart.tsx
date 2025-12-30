@@ -2,13 +2,13 @@
 
 import {
   ResponsiveContainer,
-  LineChart,
+  ComposedChart,
+  Area,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { UsageDataPoint } from "@/lib/actions/statistics";
@@ -20,7 +20,7 @@ interface UsageLineChartProps {
 }
 
 /**
- * 设备利用率折线图组件
+ * 设备利用率面积图组件（带趋势线）
  */
 export function UsageLineChart({
   data,
@@ -34,11 +34,47 @@ export function UsageLineChart({
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={height}>
-          <LineChart
+          <ComposedChart
             data={data}
-            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <defs>
+              <linearGradient id="usageGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="hsl(var(--chart-2))"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="hsl(var(--chart-2))"
+                  stopOpacity={0.02}
+                />
+              </linearGradient>
+              {/* 趋势线渐变 */}
+              <linearGradient id="lineGradientDash" x1="0" y1="0" x2="1" y2="0">
+                <stop
+                  offset="0%"
+                  stopColor="hsl(var(--chart-1))"
+                  stopOpacity={0.6}
+                />
+                <stop
+                  offset="50%"
+                  stopColor="hsl(var(--primary))"
+                  stopOpacity={0.9}
+                />
+                <stop
+                  offset="100%"
+                  stopColor="hsl(var(--chart-3))"
+                  stopOpacity={0.6}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              className="stroke-muted"
+              vertical={false}
+            />
             <XAxis
               dataKey="label"
               tick={{ fontSize: 12 }}
@@ -50,7 +86,8 @@ export function UsageLineChart({
               tickLine={false}
               axisLine={false}
               unit="%"
-              domain={[0, 100]}
+              domain={[0, "auto"]}
+              allowDecimals={false}
             />
             <Tooltip
               contentStyle={{
@@ -60,17 +97,30 @@ export function UsageLineChart({
               }}
               formatter={(value) => [`${value}%`, "利用率"]}
             />
-            <Legend />
+            {/* 填充区域 */}
+            <Area
+              type="monotone"
+              dataKey="usage"
+              stroke="transparent"
+              fill="url(#usageGradient)"
+            />
+            {/* 趋势线：仅悬停时显示点 */}
             <Line
               type="monotone"
               dataKey="usage"
               name="利用率"
-              stroke="hsl(var(--primary))"
-              strokeWidth={2}
-              dot={{ fill: "hsl(var(--primary))", strokeWidth: 2 }}
-              activeDot={{ r: 6 }}
+              stroke="url(#lineGradientDash)"
+              strokeWidth={2.5}
+              strokeOpacity={0.8}
+              dot={false}
+              activeDot={{
+                r: 5,
+                fill: "hsl(var(--primary))",
+                strokeWidth: 2,
+                stroke: "hsl(var(--background))",
+              }}
             />
-          </LineChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>

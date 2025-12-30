@@ -358,10 +358,10 @@ export async function getReservationTrendStats(
           ? endOfDay(intervals[i])
           : startOfDay(intervals[i + 1]);
 
-      // 查询该时段内创建的预约
+      // 查询该时段内开始使用的预约（使用 startTime 而非 createdAt）
       const reservations = await prisma.reservation.findMany({
         where: {
-          createdAt: {
+          startTime: {
             gte: intervalStart,
             lt: intervalEnd,
           },
