@@ -24,6 +24,7 @@ vi.mock("@/lib/prisma", () => ({
     },
     scrapRequest: {
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
     },
@@ -123,6 +124,11 @@ describe("Scrap Actions", () => {
   describe("rejectScrapRequestAction", () => {
     it("should reject request", async () => {
       (auth as any).mockResolvedValue({ user: mockHeadUser });
+      // Mock finding the request first
+      (prisma.scrapRequest.findUnique as any).mockResolvedValue({
+        id: "req-1",
+        equipmentId: "equip-1",
+      });
 
       const result = await rejectScrapRequestAction("req-1", "Fixable");
 
