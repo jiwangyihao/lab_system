@@ -26,7 +26,9 @@ model User {
   reservations Reservation[]
   checkIns     CheckIn[]
   incidents    Incident[]
-  purchaseRequests PurchaseRequest[]
+  purchaseRequests PurchaseRequest[] @relation("PurchaseApplicant")
+  purchaseRequestsHandled PurchaseRequest[] @relation("PurchaseTargetAdmin")
+  equipmentsManaged Equipment[] @relation("EquipmentAdmin")
   scrapRequests    ScrapRequest[]
 }
 
@@ -69,6 +71,8 @@ model Outsider {
 model Equipment {
   id              String          @id @default(cuid())
   name            String
+  adminId         String?
+  admin           User?           @relation("EquipmentAdmin", fields: [adminId], references: [id])
   model           String
   manufacturer    String
   purchaseDate    DateTime
@@ -225,7 +229,8 @@ model Report {
 
 // ========== 负责人管理模块 (Phase 4) ==========
 enum RequestStatus {
-  PENDING   // 待审批
+  PENDING   // 待审批 (待管理员)
+  PENDING_HEAD // 待负责人审批
   APPROVED  // 已通过
   REJECTED  // 已驳回
 }
@@ -233,7 +238,9 @@ enum RequestStatus {
 model PurchaseRequest {
   id            String        @id @default(cuid())
   applicantId   String
-  applicant     User          @relation(fields: [applicantId], references: [id])
+  applicant     User          @relation("PurchaseApplicant", fields: [applicantId], references: [id])
+  targetAdminId String?
+  targetAdmin   User?         @relation("PurchaseTargetAdmin", fields: [targetAdminId], references: [id])
   name          String
   model         String
   quantity      Int

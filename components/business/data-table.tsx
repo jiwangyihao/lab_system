@@ -51,6 +51,10 @@ interface DataTableProps<TData, TValue> {
   pageSize?: number;
   showPagination?: boolean;
   showSearch?: boolean;
+  onSelectionChange?: (selectedRows: TData[]) => void;
+  rowSelection?: Record<string, boolean>;
+  onRowSelectionChange?: (userInfo: any) => void; // Using any to avoid complex type imports for now, or importing RowSelectionState
+  getRowId?: (originalRow: TData, index: number) => string;
 }
 
 // ========== 排序表头组件 ==========
@@ -94,6 +98,10 @@ export function DataTable<TData, TValue>({
   pageSize = 10,
   showPagination = true,
   showSearch = true,
+  onSelectionChange,
+  rowSelection: controlledRowSelection,
+  onRowSelectionChange: setControlledRowSelection,
+  getRowId,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -101,11 +109,17 @@ export function DataTable<TData, TValue>({
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+
+  // Internal state if uncontrolled
+  const [internalRowSelection, setInternalRowSelection] = React.useState({});
+
+  const rowSelection = controlledRowSelection ?? internalRowSelection;
+  const setRowSelection = setControlledRowSelection ?? setInternalRowSelection;
 
   const table = useReactTable({
     data,
     columns,
+    getRowId, // Support custom ID
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -127,6 +141,23 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  // Use a ref for the callback to avoid triggering re-renders
+  const onSelectionChangeRef = React.useRef(onSelectionChange);
+  React.useEffect(() => {
+    onSelectionChangeRef.current = onSelectionChange;
+  });
+
+  React.useEffect(() => {
+    if (onSelectionChangeRef.current) {
+      const selectedRows = table
+        .getFilteredSelectedRowModel()
+        .rows.map((row) => row.original);
+      onSelectionChangeRef.current(selectedRows);
+    }
+    // Only trigger when rowSelection changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowSelection]);
+
   return (
     <div className="space-y-4">
       {/* 搜索栏 */}
@@ -140,7 +171,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="w-full max-w-sm"
           />
         </div>
       )}

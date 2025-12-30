@@ -31,7 +31,7 @@ export default async function NewPurchaseRequestPage() {
       <Separator />
 
       <div className="p-6 bg-card rounded-lg border shadow-sm max-w-2xl mx-auto">
-        <PurchaseRequestForm />
+        <PurchaseRequestForm userRole={userRole} />
       </div>
     </div>
   );

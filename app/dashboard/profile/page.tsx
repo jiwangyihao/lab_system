@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label"; // Removed
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Card,
@@ -185,52 +187,40 @@ export default function ProfilePage() {
               </Alert>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="name">姓名</Label>
-              <Input
-                id="name"
-                {...profileForm.register("name")}
-                disabled={isLoading}
-              />
-              {profileForm.formState.errors.name && (
-                <p className="text-sm text-destructive">
-                  {profileForm.formState.errors.name.message}
-                </p>
-              )}
-            </div>
+            <Field>
+              <FieldLabel>姓名</FieldLabel>
+              <Input {...profileForm.register("name")} disabled={isLoading} />
+              <FieldError>
+                {profileForm.formState.errors.name?.message}
+              </FieldError>
+            </Field>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">手机号</Label>
+              <Field>
+                <FieldLabel>手机号</FieldLabel>
                 <Input
-                  id="phone"
                   type="tel"
                   placeholder="请输入手机号"
                   {...profileForm.register("phone")}
                   disabled={isLoading}
                 />
-                {profileForm.formState.errors.phone && (
-                  <p className="text-sm text-destructive">
-                    {profileForm.formState.errors.phone.message}
-                  </p>
-                )}
-              </div>
+                <FieldError>
+                  {profileForm.formState.errors.phone?.message}
+                </FieldError>
+              </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">邮箱</Label>
+              <Field>
+                <FieldLabel>邮箱</FieldLabel>
                 <Input
-                  id="email"
                   type="email"
                   placeholder="请输入邮箱"
                   {...profileForm.register("email")}
                   disabled={isLoading}
                 />
-                {profileForm.formState.errors.email && (
-                  <p className="text-sm text-destructive">
-                    {profileForm.formState.errors.email.message}
-                  </p>
-                )}
-              </div>
+                <FieldError>
+                  {profileForm.formState.errors.email?.message}
+                </FieldError>
+              </Field>
             </div>
 
             <Button type="submit" disabled={isLoading}>
@@ -263,54 +253,45 @@ export default function ProfilePage() {
               </Alert>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">当前密码</Label>
+            <Field>
+              <FieldLabel>当前密码</FieldLabel>
               <Input
-                id="currentPassword"
                 type="password"
                 placeholder="请输入当前密码"
                 {...passwordForm.register("currentPassword")}
                 disabled={isLoading}
               />
-              {passwordForm.formState.errors.currentPassword && (
-                <p className="text-sm text-destructive">
-                  {passwordForm.formState.errors.currentPassword.message}
-                </p>
-              )}
-            </div>
+              <FieldError>
+                {passwordForm.formState.errors.currentPassword?.message}
+              </FieldError>
+            </Field>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">新密码</Label>
+              <Field>
+                <FieldLabel>新密码</FieldLabel>
                 <Input
-                  id="newPassword"
                   type="password"
                   placeholder="请输入新密码"
                   {...passwordForm.register("newPassword")}
                   disabled={isLoading}
                 />
-                {passwordForm.formState.errors.newPassword && (
-                  <p className="text-sm text-destructive">
-                    {passwordForm.formState.errors.newPassword.message}
-                  </p>
-                )}
-              </div>
+                <FieldError>
+                  {passwordForm.formState.errors.newPassword?.message}
+                </FieldError>
+              </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmNewPassword">确认新密码</Label>
+              <Field>
+                <FieldLabel>确认新密码</FieldLabel>
                 <Input
-                  id="confirmNewPassword"
                   type="password"
                   placeholder="请再次输入新密码"
                   {...passwordForm.register("confirmNewPassword")}
                   disabled={isLoading}
                 />
-                {passwordForm.formState.errors.confirmNewPassword && (
-                  <p className="text-sm text-destructive">
-                    {passwordForm.formState.errors.confirmNewPassword.message}
-                  </p>
-                )}
-              </div>
+                <FieldError>
+                  {passwordForm.formState.errors.confirmNewPassword?.message}
+                </FieldError>
+              </Field>
             </div>
 
             <Button type="submit" disabled={isLoading}>

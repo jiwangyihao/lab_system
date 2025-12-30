@@ -15,7 +15,11 @@ import { createEquipmentAction } from "@/lib/actions/equipment";
 
 // ========== 新增设备页 ==========
 
-export default function NewEquipmentPage() {
+interface PageProps {
+  admins: { id: string; name: string | null; username: string | null }[];
+}
+
+export default function NewEquipmentPage({ admins }: PageProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -59,6 +63,7 @@ export default function NewEquipmentPage() {
             mode="create"
             onSubmit={handleSubmit}
             isLoading={isLoading}
+            admins={admins}
           />
         </CardContent>
       </Card>

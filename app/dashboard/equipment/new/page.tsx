@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { Role } from "@prisma/client";
 import NewEquipmentPage from "./page.client"; // Client component
+import { getEquipmentAdminsAction } from "@/lib/actions/purchase";
 
 export default async function Page() {
   const session = await auth();
@@ -11,5 +12,8 @@ export default async function Page() {
     redirect("/dashboard/equipment");
   }
 
-  return <NewEquipmentPage />;
+  const adminsResult = await getEquipmentAdminsAction();
+  const admins = adminsResult.data || [];
+
+  return <NewEquipmentPage admins={admins} />;
 }

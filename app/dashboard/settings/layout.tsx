@@ -7,6 +7,7 @@ import {
   IconFileDescription,
   IconCalendarEvent,
   IconNetwork,
+  IconDatabase,
 } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -34,6 +35,12 @@ const settingsNav = [
     value: "network",
     href: "/dashboard/settings/network",
     icon: IconNetwork,
+  },
+  {
+    title: "数据库管理",
+    value: "database",
+    href: "/dashboard/settings/database",
+    icon: IconDatabase,
   },
 ];
 

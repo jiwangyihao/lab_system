@@ -186,3 +186,71 @@ export async function rejectScrapRequestAction(id: string, reason: string) {
     return { error: "操作失败" };
   }
 }
+
+/**
+ * 批量审批通过报废申请
+ */
+export async function batchApproveScrapAction(ids: string[]) {
+  const session = await auth();
+  if (session?.user?.role !== Role.HEAD) return { error: "无权操作" };
+
+  if (ids.length === 0) return { error: "未选择任何申请" };
+
+  let successCount = 0;
+  let failCount = 0;
+
+  for (const id of ids) {
+    const result = await approveScrapRequestAction(id);
+    if (result.success) {
+      successCount++;
+    } else {
+      failCount++;
+    }
+  }
+
+  revalidatePath("/dashboard/admin/scrap");
+  revalidatePath("/dashboard/equipment");
+
+  if (failCount === 0) {
+    return { success: true, message: `成功批准 ${successCount} 个申请` };
+  } else {
+    return {
+      success: true,
+      message: `批准 ${successCount} 个，失败 ${failCount} 个`,
+    };
+  }
+}
+
+/**
+ * 批量驳回报废申请
+ */
+export async function batchRejectScrapAction(ids: string[], reason: string) {
+  const session = await auth();
+  if (session?.user?.role !== Role.HEAD) return { error: "无权操作" };
+
+  if (ids.length === 0) return { error: "未选择任何申请" };
+
+  let successCount = 0;
+  let failCount = 0;
+
+  for (const id of ids) {
+    const result = await rejectScrapRequestAction(id, reason);
+    if (result.success) {
+      successCount++;
+    } else {
+      failCount++;
+    }
+  }
+
+  revalidatePath("/dashboard/admin/scrap");
+  revalidatePath("/dashboard/equipment");
+
+  if (failCount === 0) {
+    return { success: true, message: `成功驳回 ${successCount} 个申请` };
+  } else {
+    return {
+      success: true,
+      message: `驳回 ${successCount} 个，失败 ${failCount} 个`,
+    };
+  }
+}

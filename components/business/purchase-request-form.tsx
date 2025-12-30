@@ -16,20 +16,50 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // 确保这些组件存在
 
 import {
   createPurchaseSchema,
   type CreatePurchaseInput,
 } from "@/lib/schemas/purchase.schema";
-import { createPurchaseRequestAction } from "@/lib/actions/purchase";
+import {
+  createPurchaseRequestAction,
+  getEquipmentAdminsAction,
+} from "@/lib/actions/purchase";
 
-export function PurchaseRequestForm() {
+interface PurchaseRequestFormProps {
+  userRole?: string;
+}
+
+export function PurchaseRequestForm({ userRole }: PurchaseRequestFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [admins, setAdmins] = React.useState<{ id: string; name: string }[]>(
+    []
+  );
+
+  // 如果是教师，加载可选的管理员列表
+  React.useEffect(() => {
+    if (userRole === "TEACHER") {
+      getEquipmentAdminsAction().then((res) => {
+        if (res.data) {
+          setAdmins(res.data);
+        }
+      });
+    }
+  }, [userRole]);
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CreatePurchaseInput>({
     resolver: zodResolver(createPurchaseSchema),
@@ -99,6 +129,32 @@ export function PurchaseRequestForm() {
           <FieldDescription>请输入预计的单台设备及配件总价。</FieldDescription>
           <FieldError>{errors.budget?.message}</FieldError>
         </Field>
+
+        {userRole === "TEACHER" && (
+          <Field>
+            <FieldLabel>负责管理员 *</FieldLabel>
+            <Select
+              onValueChange={(val) => setValue("targetAdminId", val as any)}
+            >
+              <SelectTrigger>
+                <SelectValue
+                  {...({ placeholder: "请选择将负责此设备的管理员" } as any)}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {admins.map((admin) => (
+                  <SelectItem key={admin.id} value={admin.id}>
+                    {admin.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FieldDescription>
+              该申请将提交给选定的管理员进行初审。
+            </FieldDescription>
+            <FieldError>{errors.targetAdminId?.message}</FieldError>
+          </Field>
+        )}
 
         <Field>
           <FieldLabel>申请理由 *</FieldLabel>

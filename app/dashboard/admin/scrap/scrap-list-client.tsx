@@ -21,7 +21,10 @@ import { DataTable, SortableHeader } from "@/components/business/data-table";
 import {
   approveScrapRequestAction,
   rejectScrapRequestAction,
+  batchApproveScrapAction,
+  batchRejectScrapAction,
 } from "@/lib/actions/scrap";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +57,6 @@ interface ScrapListClientProps {
   initialData: ScrapRequest[];
   userRole: Role;
 }
-
 export default function ScrapListClient({
   initialData,
   userRole,
@@ -66,6 +68,10 @@ export default function ScrapListClient({
   }>({ open: false, id: null });
   const [rejectReason, setRejectReason] = React.useState("");
   const router = useRouter();
+
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectedRows, setSelectedRows] = React.useState<ScrapRequest[]>([]);
+  const [batchRejectOpen, setBatchRejectOpen] = React.useState(false);
 
   React.useEffect(() => {
     setData(initialData);
@@ -95,13 +101,66 @@ export default function ScrapListClient({
     }
   };
 
+  const handleBatchApprove = async () => {
+    const ids = selectedRows.map((r) => r.id);
+    const result = await batchApproveScrapAction(ids);
+    if (result.success) {
+      toast.success(result.message);
+      setRowSelection({});
+      setSelectedRows([]);
+    } else {
+      toast.error(result.error || "批量通过失败");
+    }
+  };
+
+  const handleBatchReject = async () => {
+    if (!rejectReason.trim()) {
+      toast.error("请输入驳回原因");
+      return;
+    }
+    const ids = selectedRows.map((r) => r.id);
+    const result = await batchRejectScrapAction(ids, rejectReason);
+    if (result.success) {
+      toast.success(result.message);
+      setRowSelection({});
+      setSelectedRows([]);
+      setBatchRejectOpen(false);
+      setRejectReason("");
+    } else {
+      toast.error(result.error || "批量驳回失败");
+    }
+  };
+
   const columns: ColumnDef<ScrapRequest>[] = [
     {
-      accessorKey: "equipment.name",
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="translate-y-[2px]"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-[2px]"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "equipmentName",
+      accessorFn: (row) => row.equipment?.name,
       header: "设备名称",
     },
     {
-      accessorKey: "equipment.model",
+      id: "equipmentModel",
+      accessorFn: (row) => row.equipment?.model,
       header: "规格型号",
     },
     {
@@ -117,7 +176,8 @@ export default function ScrapListClient({
       ),
     },
     {
-      accessorKey: "applicant.name",
+      id: "applicantName",
+      accessorFn: (row) => row.applicant?.name,
       header: "申请人",
     },
     {
@@ -125,17 +185,22 @@ export default function ScrapListClient({
       header: "状态",
       cell: ({ row }) => {
         const status = row.getValue("status") as RequestStatus;
-        const config = {
+        const statusConfig: Record<string, any> = {
           [RequestStatus.PENDING]: {
             label: "待审批",
             variant: "outline",
             className: "text-red-600 border-red-200 bg-red-50",
           },
+          ["PENDING_HEAD"]: {
+            label: "待负责人审批",
+            variant: "outline",
+            className: "text-blue-600 border-blue-200 bg-blue-50",
+          },
           [RequestStatus.APPROVED]: {
             label: "已通过",
             variant: "default",
             className: "bg-gray-600 hover:bg-gray-700",
-          }, // 报废通常是灰色调
+          },
           [RequestStatus.REJECTED]: {
             label: "已驳回",
             variant: "destructive",
@@ -144,8 +209,11 @@ export default function ScrapListClient({
         }[status] || { label: status, variant: "secondary", className: "" };
 
         return (
-          <Badge variant={config.variant as any} className={config.className}>
-            {config.label}
+          <Badge
+            variant={statusConfig.variant as any}
+            className={statusConfig.className}
+          >
+            {statusConfig.label}
           </Badge>
         );
       },
@@ -209,7 +277,27 @@ export default function ScrapListClient({
   return (
     <>
       <div className="space-y-4">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between items-center mb-4">
+          {selectedRows.length > 0 ? (
+            <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
+              <span className="text-sm text-muted-foreground mr-2">
+                已选择 {selectedRows.length} 项
+              </span>
+              <Button size="sm" variant="default" onClick={handleBatchApprove}>
+                批量通过
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => setBatchRejectOpen(true)}
+              >
+                批量驳回
+              </Button>
+            </div>
+          ) : (
+            <div /> // Spacer
+          )}
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -231,9 +319,12 @@ export default function ScrapListClient({
         <DataTable
           columns={columns}
           data={data}
-          searchKey="equipment.name" // 注意：DataTable 默认只支持一级 key，这里需要 data-table 支持 dot notation 或者改列定义
-          // 如果 DataTable 不支持 dot notation，search 可能失效。这里暂且这样，若失效则需要修改 accessor 或 data-table
+          searchKey="equipmentName"
           searchPlaceholder="搜索设备名称..."
+          onSelectionChange={(rows) => setSelectedRows(rows as ScrapRequest[])}
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          getRowId={(row) => row.id}
         />
       </div>
 
@@ -260,6 +351,37 @@ export default function ScrapListClient({
               取消
             </Button>
             <Button variant="destructive" onClick={handleRejectConfirm}>
+              确认驳回
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 批量驳回弹窗 */}
+      <Dialog open={batchRejectOpen} onOpenChange={setBatchRejectOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>批量驳回申请</DialogTitle>
+            <DialogDescription>
+              请输入驳回原因，将对选中的 {selectedRows.length} 个申请生效。
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="请输入驳回理由..."
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setBatchRejectOpen(false);
+                setRejectReason("");
+              }}
+            >
+              取消
+            </Button>
+            <Button variant="destructive" onClick={handleBatchReject}>
               确认驳回
             </Button>
           </DialogFooter>

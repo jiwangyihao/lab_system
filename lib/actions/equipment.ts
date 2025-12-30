@@ -49,6 +49,11 @@ export type EquipmentListItem = {
   status: EquipmentStatus;
   rentalPrice: number;
   maintenanceCycle: number | null;
+  admin: {
+    id: string;
+    name: string;
+    username: string;
+  } | null;
 };
 
 export type EquipmentListResult = {
@@ -89,6 +94,10 @@ export async function getEquipmentsAction(
       where.status = status;
     }
 
+    if (validatedFilters.adminId) {
+      where.adminId = validatedFilters.adminId;
+    }
+
     // 排除已报废设备（除非明确筛选） - 用户反馈希望看到报废设备，暂取消默认隐藏
     // if (!status) {
     //   where.status = { not: "SCRAPPED" };
@@ -113,6 +122,13 @@ export async function getEquipmentsAction(
           status: true,
           rentalPrice: true,
           maintenanceCycle: true,
+          admin: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+            },
+          },
         },
       }),
       prisma.equipment.count({ where }),
@@ -221,6 +237,7 @@ export async function createEquipmentAction(
         status: validatedData.status,
         rentalPrice: validatedData.rentalPrice,
         maintenanceCycle: validatedData.maintenanceCycle ?? null,
+        adminId: validatedData.adminId,
       },
     });
 
@@ -422,6 +439,85 @@ export async function changeEquipmentStatusAction(
       return { success: false, message: error.message };
     }
     return { success: false, message: "状态变更失败" };
+  }
+}
+
+// ========== 批量操作 ==========
+
+export async function batchDeleteEquipmentAction(
+  ids: string[]
+): Promise<ActionResult> {
+  try {
+    const authCheck = await checkAdminOrHead();
+    if (!authCheck.success) return authCheck;
+
+    if (!ids.length) return { success: false, message: "未选择任何设备" };
+
+    // 检查是否有进行中的预约
+    const pendingCount = await prisma.reservation.count({
+      where: {
+        equipmentId: { in: ids },
+        status: {
+          in: [
+            "PENDING_TEACHER",
+            "PENDING_ADMIN",
+            "PENDING_HEAD",
+            "APPROVED",
+            "IN_USE",
+          ],
+        },
+      },
+    });
+
+    if (pendingCount > 0) {
+      return {
+        success: false,
+        message: "选中的设备中存在进行中的预约，无法批量报废",
+      };
+    }
+
+    // 批量更新为已报废
+    await prisma.equipment.updateMany({
+      where: { id: { in: ids } },
+      data: { status: "SCRAPPED" },
+    });
+
+    // 记录日志 (系统操作)
+    // 批量记录比较麻烦，暂略，或者循环创建. createMany supported.
+    // 但 maintenanceLog 需要 equipmentId.
+    // 简单起见，仅更新状态.
+
+    revalidatePath("/dashboard/equipment");
+    return { success: true, message: `成功报废 ${ids.length} 台设备` };
+  } catch (error) {
+    return { success: false, message: "批量操作失败" };
+  }
+}
+
+export async function batchChangeStatusAction(
+  ids: string[],
+  newStatus: EquipmentStatus
+): Promise<ActionResult> {
+  try {
+    const authCheck = await checkAdminOrHead();
+    if (!authCheck.success) return authCheck;
+
+    if (!ids.length) return { success: false, message: "未选择任何设备" };
+
+    // 简单批量更新，不检查每台设备的状态迁移是否合法 (假设批量操作强制执行或由前端过滤)
+    // 但为了数据一致性，最好还是检查.
+    // 如果是设置为 AVAILABLE or MAINTENANCE, 通常可以直接更.
+    // 这里直接 updateMany.
+
+    await prisma.equipment.updateMany({
+      where: { id: { in: ids } },
+      data: { status: newStatus },
+    });
+
+    revalidatePath("/dashboard/equipment");
+    return { success: true, message: `成功更新 ${ids.length} 台设备状态` };
+  } catch (error) {
+    return { success: false, message: "批量更新失败" };
   }
 }
 

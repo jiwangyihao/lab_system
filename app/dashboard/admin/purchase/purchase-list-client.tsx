@@ -45,6 +45,11 @@ type PurchaseRequest = {
     name: string;
     username: string;
   };
+  targetAdmin: {
+    name: string;
+    username: string;
+  } | null;
+  targetAdminId: string | null;
   createdAt: Date;
   rejectReason: string | null;
 };
@@ -52,11 +57,13 @@ type PurchaseRequest = {
 interface PurchaseListClientProps {
   initialData: PurchaseRequest[];
   userRole: Role;
+  userId: string;
 }
 
 export default function PurchaseListClient({
   initialData,
   userRole,
+  userId,
 }: PurchaseListClientProps) {
   const [data, setData] = React.useState<PurchaseRequest[]>(initialData);
   const [rejectDialog, setRejectDialog] = React.useState<{
@@ -95,7 +102,76 @@ export default function PurchaseListClient({
     }
   };
 
+  const handleBatchApprove = async () => {
+    const ids = selectedRows.map((r) => r.id);
+    const result = await import("@/lib/actions/purchase").then((mod) =>
+      mod.batchApprovePurchaseAction(ids)
+    );
+    if (result.success) {
+      toast.success(result.message);
+      setRowSelection({});
+    } else {
+      toast.error(result.error);
+    }
+  };
+
+  const handleBatchReject = async () => {
+    if (!rejectReason.trim()) {
+      toast.error("请输入驳回原因");
+      return;
+    }
+    const ids = selectedRows.map((r) => r.id);
+    const result = await import("@/lib/actions/purchase").then((mod) =>
+      mod.batchRejectPurchaseAction(ids, rejectReason)
+    );
+    if (result.success) {
+      toast.success(result.message);
+      setRejectDialog({ open: false, id: null }); // Reuse dialog? Or Separate?
+      // Re-using reject dialog for batch might be confusing if state structure differs (id vs batch).
+      // Let's create separate batch reject handler or adapt dialog logic.
+      setRowSelection({});
+      setRejectReason("");
+      setBatchRejectOpen(false);
+    } else {
+      toast.error(result.error);
+    }
+  };
+
+  // 批量操作状态
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectedRows, setSelectedRows] = React.useState<PurchaseRequest[]>([]);
+  const [batchRejectOpen, setBatchRejectOpen] = React.useState(false);
+
   const columns: ColumnDef<PurchaseRequest>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="px-1">
+          <input
+            type="checkbox"
+            checked={table.getIsAllPageRowsSelected()}
+            onChange={(e) =>
+              table.toggleAllPageRowsSelected(!!e.target.checked)
+            }
+            aria-label="Select all"
+            className="translate-y-[2px]"
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="px-1">
+          <input
+            type="checkbox"
+            checked={row.getIsSelected()}
+            onChange={(e) => row.toggleSelected(!!e.target.checked)}
+            aria-label="Select row"
+            className="translate-y-[2px]"
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "name",
       header: "设备名称",
@@ -125,15 +201,32 @@ export default function PurchaseListClient({
       header: "申请人",
     },
     {
+      accessorKey: "targetAdmin.name",
+      header: "负责管理员",
+      cell: ({ row }) => {
+        const admin = row.original.targetAdmin;
+        return admin ? (
+          admin.name
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        );
+      },
+    },
+    {
       accessorKey: "status",
       header: "状态",
       cell: ({ row }) => {
         const status = row.getValue("status") as RequestStatus;
-        const config = {
+        const statusConfig: Record<string, any> = {
           [RequestStatus.PENDING]: {
             label: "待审批",
             variant: "outline",
             className: "text-yellow-600 border-yellow-200 bg-yellow-50",
+          },
+          ["PENDING_HEAD" as RequestStatus]: {
+            label: "待负责人审批",
+            variant: "outline",
+            className: "text-blue-600 border-blue-200 bg-blue-50",
           },
           [RequestStatus.APPROVED]: {
             label: "已通过",
@@ -148,8 +241,11 @@ export default function PurchaseListClient({
         }[status] || { label: status, variant: "secondary", className: "" };
 
         return (
-          <Badge variant={config.variant as any} className={config.className}>
-            {config.label}
+          <Badge
+            variant={statusConfig.variant as any}
+            className={statusConfig.className}
+          >
+            {statusConfig.label}
           </Badge>
         );
       },
@@ -170,7 +266,13 @@ export default function PurchaseListClient({
       cell: ({ row }) => {
         const item = row.original;
         const isPending = item.status === RequestStatus.PENDING;
-        const canApprove = String(userRole) === "HEAD" && isPending;
+        const isPendingHead = item.status === ("PENDING_HEAD" as RequestStatus);
+
+        const canApprove =
+          (String(userRole) === "HEAD" && (isPending || isPendingHead)) ||
+          (String(userRole) === "ADMIN" &&
+            isPending &&
+            item.targetAdminId === userId);
 
         return (
           <div className="flex items-center gap-2">
@@ -222,11 +324,34 @@ export default function PurchaseListClient({
           </Button>
         </div>
 
+        {/* 批量操作 */}
+        {selectedRows.length > 0 && (
+          <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
+            <span className="text-sm text-muted-foreground mr-2">
+              已选择 {selectedRows.length} 项
+            </span>
+            <Button size="sm" variant="default" onClick={handleBatchApprove}>
+              批量通过
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => setBatchRejectOpen(true)}
+            >
+              批量驳回
+            </Button>
+          </div>
+        )}
+
         <DataTable
           columns={columns}
           data={data}
           searchKey="name"
           searchPlaceholder="搜索设备名称..."
+          onSelectionChange={setSelectedRows}
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          getRowId={(row) => row.id}
         />
       </div>
 
@@ -256,6 +381,38 @@ export default function PurchaseListClient({
               取消
             </Button>
             <Button variant="destructive" onClick={handleRejectConfirm}>
+              确认驳回
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 批量驳回弹窗 */}
+      <Dialog open={batchRejectOpen} onOpenChange={setBatchRejectOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>批量驳回申请</DialogTitle>
+            <DialogDescription>
+              请输入驳回原因，将对选中的 {selectedRows.length} 个申请生效。
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="请输入驳回理由..."
+            className="mt-2"
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setBatchRejectOpen(false);
+                setRejectReason("");
+              }}
+            >
+              取消
+            </Button>
+            <Button variant="destructive" onClick={handleBatchReject}>
               确认驳回
             </Button>
           </DialogFooter>

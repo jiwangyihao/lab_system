@@ -1,10 +1,16 @@
-"use client";
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+  FieldGroup,
+} from "@/components/ui/field";
 
-import * as React from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { Role } from "@prisma/client";
+// remove Switch import if not used elsewhere, keep if needed.
+// Switch is used.
+
+// remove Label import if mostly replaced, but Switch layout still uses it?
+// Switch layout uses internal Label.
+// I will Replace imports.
 
 import {
   Dialog,
@@ -23,7 +29,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import * as React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Role } from "@prisma/client";
+// import { Label } from "@/components/ui/label"; // Removed as we use FieldLabel
 
 import {
   createStaffSchema,
@@ -143,50 +154,33 @@ export function StaffFormDialog({
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           {!isEdit && (
-            <div className="space-y-2">
-              <Label htmlFor="username">用户名 *</Label>
-              <Input
-                id="username"
-                placeholder="输入登录账号"
-                {...register("username")}
-              />
-              {errors.username && (
-                <p className="text-sm text-destructive">
-                  {errors.username.message as string}
-                </p>
-              )}
-            </div>
+            <Field>
+              <FieldLabel>用户名 *</FieldLabel>
+              <Input placeholder="输入登录账号" {...register("username")} />
+              <FieldError>{errors.username?.message as string}</FieldError>
+            </Field>
           )}
 
           {!isEdit && (
-            <div className="space-y-2">
-              <Label htmlFor="password">初始密码 *</Label>
+            <Field>
+              <FieldLabel>初始密码 *</FieldLabel>
               <Input
-                id="password"
                 type="password"
                 placeholder="设置初始密码"
                 {...register("password")}
               />
-              {errors.password && (
-                <p className="text-sm text-destructive">
-                  {errors.password.message as string}
-                </p>
-              )}
-            </div>
+              <FieldError>{errors.password?.message as string}</FieldError>
+            </Field>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="name">姓名 *</Label>
-            <Input id="name" placeholder="输入真实姓名" {...register("name")} />
-            {errors.name && (
-              <p className="text-sm text-destructive">
-                {errors.name.message as string}
-              </p>
-            )}
-          </div>
+          <Field>
+            <FieldLabel>姓名 *</FieldLabel>
+            <Input placeholder="输入真实姓名" {...register("name")} />
+            <FieldError>{errors.name?.message as string}</FieldError>
+          </Field>
 
-          <div className="space-y-2">
-            <Label>角色权限 *</Label>
+          <Field>
+            <FieldLabel>角色权限 *</FieldLabel>
             <Controller
               control={control}
               name="role"
@@ -213,37 +207,27 @@ export function StaffFormDialog({
                 </Select>
               )}
             />
-            {errors.role && (
-              <p className="text-sm text-destructive">
-                {errors.role.message as string}
-              </p>
-            )}
-          </div>
+            <FieldError>{errors.role?.message as string}</FieldError>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone">联系电话</Label>
-            <Input id="phone" placeholder="选填" {...register("phone")} />
-            {errors.phone && (
-              <p className="text-sm text-destructive">
-                {errors.phone.message as string}
-              </p>
-            )}
-          </div>
+          <Field>
+            <FieldLabel>联系电话</FieldLabel>
+            <Input placeholder="选填" {...register("phone")} />
+            <FieldError>{errors.phone?.message as string}</FieldError>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">电子邮箱</Label>
-            <Input id="email" placeholder="选填" {...register("email")} />
-            {errors.email && (
-              <p className="text-sm text-destructive">
-                {errors.email.message as string}
-              </p>
-            )}
-          </div>
+          <Field>
+            <FieldLabel>电子邮箱</FieldLabel>
+            <Input placeholder="选填" {...register("email")} />
+            <FieldError>{errors.email?.message as string}</FieldError>
+          </Field>
 
           {isEdit && (
             <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
               <div className="space-y-0.5">
-                <Label>账号启用状态</Label>
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  账号启用状态
+                </label>
               </div>
               <Controller
                 control={control}

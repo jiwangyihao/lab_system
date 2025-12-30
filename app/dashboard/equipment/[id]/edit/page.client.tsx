@@ -21,9 +21,10 @@ import {
 
 interface PageProps {
   userRole: string;
+  admins: { id: string; name: string | null; username: string | null }[];
 }
 
-export default function EditEquipmentPage({ userRole }: PageProps) {
+export default function EditEquipmentPage({ userRole, admins }: PageProps) {
   const router = useRouter();
   const params = useParams();
   const equipmentId = params.id as string;
@@ -116,10 +117,12 @@ export default function EditEquipmentPage({ userRole }: PageProps) {
               status: equipment.status,
               rentalPrice: equipment.rentalPrice,
               maintenanceCycle: equipment.maintenanceCycle,
+              adminId: equipment.admin?.id ?? null,
             }}
             onSubmit={handleSubmit}
             isLoading={isSaving}
             userRole={userRole}
+            admins={admins}
           />
         </CardContent>
       </Card>

@@ -10,8 +10,16 @@ import { prisma, type Role } from "@/lib/prisma";
  * This logic is based on the requirement: "IP White list verification".
  * If the requirement implies *everyone* needs to be whitelisted, the logic should be adjusted.
  * Based on 5.2 in the plan, it says "Borrowers can access via internet", so restricted roles are checked against whitelist.
+ *
+ * Environment Variable:
+ * - ENABLE_IP_WHITELIST: Set to "true" to enable IP whitelist filtering. Default is disabled.
  */
 export async function isAllowedIP(ip: string, role: Role): Promise<boolean> {
+  // 如果环境变量未启用 IP 白名单，则跳过所有过滤
+  if (process.env.ENABLE_IP_WHITELIST !== "true") {
+    return true;
+  }
+
   // Allow common users to access from anywhere
   if (role === "STUDENT" || role === "TEACHER" || role === "OUTSIDER") {
     return true;

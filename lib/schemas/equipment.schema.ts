@@ -35,10 +35,10 @@ export const createEquipmentSchema = z.object({
   rentalPrice: z.number().min(0, "租用价格不能为负数").default(0),
   maintenanceCycle: z
     .number()
-    .int("检修周期必须为整数")
     .min(1, "检修周期至少 1 天")
     .nullable()
     .optional(),
+  adminId: z.string().cuid("无效的管理员 ID").nullable().optional(),
 });
 
 export type CreateEquipmentData = z.infer<typeof createEquipmentSchema>;
@@ -60,6 +60,7 @@ export const equipmentFilterSchema = z.object({
   pageSize: z.number().int().min(1).max(100).default(10),
   sortBy: z.enum(["name", "purchaseDate", "status", "rentalPrice"]).optional(),
   sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  adminId: z.string().optional(),
 });
 
 export type EquipmentFilterData = z.infer<typeof equipmentFilterSchema>;

@@ -17,6 +17,7 @@ interface ApprovalClientProps {
   scrapRequests: any[];
   reservationRequests: any[];
   userRole: Role;
+  userId: string;
 }
 
 export default function ApprovalClient({
@@ -24,6 +25,7 @@ export default function ApprovalClient({
   scrapRequests,
   reservationRequests,
   userRole,
+  userId,
 }: ApprovalClientProps) {
   // Teachers can only approve student reservations
   const isTeacher = userRole === "TEACHER";
@@ -67,6 +69,7 @@ export default function ApprovalClient({
           <PurchaseListClient
             initialData={purchaseRequests}
             userRole={userRole}
+            userId={userId}
           />
         </TabsContent>
       )}

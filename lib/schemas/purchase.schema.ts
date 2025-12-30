@@ -6,6 +6,7 @@ export const createPurchaseSchema = z.object({
   quantity: z.number().int().min(1, "数量至少为1"),
   budget: z.number().min(0, "预算不能为负数"),
   reason: z.string().min(5, "申请理由至少5个字符"),
+  targetAdminId: z.string().optional(),
 });
 
 export type CreatePurchaseInput = z.infer<typeof createPurchaseSchema>;

@@ -68,6 +68,7 @@ export default async function ApprovalPage() {
           scrapRequests={scrapRequests as any}
           reservationRequests={reservationRequests as any}
           userRole={userRole as Role}
+          userId={session?.user?.id as string}
         />
       </Suspense>
     </div>
