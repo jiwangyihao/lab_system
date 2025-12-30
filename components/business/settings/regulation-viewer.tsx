@@ -2,6 +2,7 @@
 
 import { RegulationItem } from "@/lib/actions/regulation";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 interface RegulationViewerProps {
   content: RegulationItem[] | unknown; // Handle Json type from Prisma
@@ -29,11 +30,15 @@ export function RegulationViewer({
         : "list-[lower-roman]";
 
     return (
-      <li key={item.id} className="pl-1 my-1">
+      <li className="pl-1 my-1">
         <span className="leading-relaxed text-foreground">{item.text}</span>
         {item.children && item.children.length > 0 && (
           <ol className={cn("pl-6 mt-1 space-y-1", listStyle)}>
-            {item.children.map((child) => renderItem(child, level + 1))}
+            {item.children.map((child) => (
+              <React.Fragment key={child.id}>
+                {renderItem(child, level + 1)}
+              </React.Fragment>
+            ))}
           </ol>
         )}
       </li>
@@ -47,7 +52,9 @@ export function RegulationViewer({
         className
       )}
     >
-      {items.map((item) => renderItem(item, 0))}
+      {items.map((item) => (
+        <React.Fragment key={item.id}>{renderItem(item, 0)}</React.Fragment>
+      ))}
     </ol>
   );
 }
