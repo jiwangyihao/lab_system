@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -55,7 +57,7 @@ function AlertDialogFooter({
   className,
   ...props
 }: React.ComponentProps<typeof DialogFooter>) {
-  return <DialogFooter className={className} {...props} />;
+  return <DialogFooter className={cn("gap-2", className)} {...props} />;
 }
 
 function AlertDialogTitle({
@@ -72,28 +74,43 @@ function AlertDialogDescription({
   return <DialogDescription className={className} {...props} />;
 }
 
-// AlertDialogAction 通常用于提交/确认
-function AlertDialogAction({ className, children, onClick, ...props }: any) {
-  // 借用子组件内部的按钮样式或逻辑
-  // 在这里简单返回 children，外层通常已经包含了 Button
+// AlertDialogAction 用于提交/确认操作
+interface AlertDialogActionProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+}
+
+function AlertDialogAction({
+  className,
+  children,
+  ...props
+}: AlertDialogActionProps) {
   return (
-    <div
-      onClick={onClick}
-      className={cn("inline-flex justify-center", className)}
-      {...props}
-    >
+    <Button className={cn(className)} {...props}>
       {children}
-    </div>
+    </Button>
   );
 }
 
-// AlertDialogCancel 通常用于取消，并触发关闭
-function AlertDialogCancel({ className, children, ...props }: any) {
-  // 这里依赖外层控制 open 状态，或者可以借助 DialogClose
+// AlertDialogCancel 用于取消并关闭对话框
+interface AlertDialogCancelProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+}
+
+function AlertDialogCancel({
+  className,
+  children,
+  ...props
+}: AlertDialogCancelProps) {
   return (
-    <div className={cn("inline-flex justify-center", className)} {...props}>
-      {children}
-    </div>
+    <DialogClose
+      render={
+        <Button variant="outline" className={cn(className)} {...props}>
+          {children}
+        </Button>
+      }
+    />
   );
 }
 

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -202,7 +203,9 @@ export default function StaffClient({ initialData }: StaffClientProps) {
               <IconDotsVertical className="h-4 w-4 text-muted-foreground" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>操作</DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>操作</DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuItem onClick={() => handleEdit(staff)}>
                 <IconEdit className="mr-2 h-4 w-4" />
                 编辑信息
