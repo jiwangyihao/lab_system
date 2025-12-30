@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { Role } from "@prisma/client";
 import { getPurchaseRequestsAction } from "@/lib/actions/purchase";
 import { getScrapRequestsAction } from "@/lib/actions/scrap";
+import { getPendingReservations } from "@/lib/actions/reservation";
 import { Separator } from "@/components/ui/separator";
 import ApprovalClient from "./approval-client";
 
@@ -22,18 +23,34 @@ export default async function ApprovalPage() {
     redirect("/dashboard");
   }
 
-  // 2. 并行获取数据
-  const [purchaseResponse, scrapResponse] = await Promise.all([
-    getPurchaseRequestsAction(),
-    getScrapRequestsAction(),
-  ]);
+  // Teachers only see reservation approvals, not purchase/scrap
+  const isTeacher = userRole === "TEACHER";
 
-  if (purchaseResponse.error || scrapResponse.error) {
-    return <div>加载数据失败，请重试</div>;
+  let purchaseRequests: any[] = [];
+  let scrapRequests: any[] = [];
+  let reservationRequests: any[] = [];
+
+  if (isTeacher) {
+    // Teachers only need reservation data
+    const reservationResponse = await getPendingReservations();
+    reservationRequests = reservationResponse.data || [];
+  } else {
+    // ADMIN and HEAD get all data
+    const [purchaseResponse, scrapResponse, reservationResponse] =
+      await Promise.all([
+        getPurchaseRequestsAction(),
+        getScrapRequestsAction(),
+        getPendingReservations(),
+      ]);
+
+    if (purchaseResponse.error || scrapResponse.error) {
+      return <div>加载数据失败，请重试</div>;
+    }
+
+    purchaseRequests = purchaseResponse.data || [];
+    scrapRequests = scrapResponse.data || [];
+    reservationRequests = reservationResponse.data || [];
   }
-
-  const purchaseRequests = purchaseResponse.data || [];
-  const scrapRequests = scrapResponse.data || [];
 
   return (
     <div className="space-y-6">
@@ -49,6 +66,7 @@ export default async function ApprovalPage() {
         <ApprovalClient
           purchaseRequests={purchaseRequests as any}
           scrapRequests={scrapRequests as any}
+          reservationRequests={reservationRequests as any}
           userRole={userRole as Role}
         />
       </Suspense>
