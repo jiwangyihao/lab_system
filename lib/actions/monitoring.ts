@@ -110,13 +110,25 @@ export async function getCheckInLogs(
       return [];
     }
 
-    const where: any = {};
+    const where: Prisma.CheckInWhereInput = {};
     if (equipmentId) where.equipmentId = equipmentId;
+
+    // TEACHER 只能看自己辅导的学生的日志
+    if (session.user.role === "TEACHER") {
+      // 获取该教师辅导的学生 ID 列表
+      const students = await prisma.student.findMany({
+        where: { tutorId: session.user.id },
+        select: { userId: true },
+      });
+      const studentIds = students.map((s) => s.userId);
+      // 也包括教师自己的日志
+      where.userId = { in: [...studentIds, session.user.id] };
+    }
 
     const logs = await prisma.checkIn.findMany({
       where,
       include: { user: true, equipment: true, reservation: true } as any,
-      orderBy: { checkInTime: "desc" }, // 或 id desc
+      orderBy: { checkInTime: "desc" },
     });
     return logs as unknown as CheckInLogWithRelations[];
   } catch (error) {
