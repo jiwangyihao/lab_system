@@ -81,6 +81,7 @@ model Equipment {
   timeSlots       EquipmentTimeSlot[]
   checkIns        CheckIn[]
   scrapRequests   ScrapRequest[]
+  incidents       Incident[]
 }
 
 enum EquipmentStatus {
@@ -170,6 +171,7 @@ model Incident {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   equipmentId String?
+  equipment   Equipment? @relation(fields: [equipmentId], references: [id])
   title       String
   description String
   severity    String   // LOW, MEDIUM, HIGH
