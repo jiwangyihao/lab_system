@@ -46,9 +46,11 @@ export default function YearlyReportsPage() {
     setIsLoading(false);
   };
 
-  const handleYearChange = (value: string) => {
-    const year = parseInt(value, 10);
-    setSelectedYear(year);
+  const handleYearChange = (value: string | null) => {
+    if (value) {
+      const year = parseInt(value, 10);
+      setSelectedYear(year);
+    }
   };
 
   const handleRefresh = () => {

@@ -57,8 +57,10 @@ export default function MonthlyReportsPage() {
     setIsLoading(false);
   };
 
-  const handleValueChange = (value: string) => {
-    setSelectedValue(value);
+  const handleValueChange = (value: string | null) => {
+    if (value) {
+      setSelectedValue(value);
+    }
   };
 
   const handleRefresh = () => {

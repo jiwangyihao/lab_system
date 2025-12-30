@@ -28,8 +28,7 @@ export const createEquipmentSchema = z.object({
     .min(2, "制造商名称至少 2 个字符")
     .max(100, "制造商名称最多 100 个字符"),
   purchaseDate: z.coerce.date({
-    required_error: "请选择购买日期",
-    invalid_type_error: "日期格式无效",
+    message: "请选择购买日期",
   }),
   status: EquipmentStatusEnum.default("AVAILABLE"),
   rentalPrice: z.number().min(0, "租用价格不能为负数").default(0),

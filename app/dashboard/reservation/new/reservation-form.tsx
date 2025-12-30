@@ -43,7 +43,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 const formSchema = z.object({
   equipmentId: z.string().min(1, "请选择设备"),
   date: z.date({
-    required_error: "请选择日期",
+    message: "请选择日期",
   }),
   startTime: z.string().regex(/^\d{2}:\d{2}$/, "格式如 08:00"),
   endTime: z.string().regex(/^\d{2}:\d{2}$/, "格式如 10:00"),

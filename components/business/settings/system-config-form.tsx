@@ -40,7 +40,7 @@ export function SystemConfigForm({ initialData }: SystemConfigFormProps) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       maintenanceCycle: parseInt(
         initialData[SYSTEM_CONFIG_KEYS.MAINTENANCE_CYCLE_DEFAULT] || "30"

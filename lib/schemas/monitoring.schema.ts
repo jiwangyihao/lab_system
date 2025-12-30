@@ -5,7 +5,7 @@ export const incidentSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
   description: z.string().min(1, "描述不能为空"),
   severity: z.enum(["LOW", "MEDIUM", "HIGH"], {
-    required_error: "请选择严重程度",
+    message: "请选择严重程度",
   }),
 });
 

@@ -6,7 +6,7 @@ export const createStaffSchema = z.object({
   name: z.string().min(2, "姓名至少2个字符"),
   password: z.string().min(6, "密码至少6个字符"),
   role: z.enum([Role.ADMIN, Role.TEACHER, Role.HEAD], {
-    errorMap: () => ({ message: "请选择有效的角色" }),
+    message: "请选择有效的角色",
   }),
   phone: z.string().optional(),
   email: z.string().email("请输入有效的邮箱地址").optional().or(z.literal("")),
