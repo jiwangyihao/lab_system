@@ -4,7 +4,7 @@ import * as React from "react";
 import { useState, useTransition } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { ReservationStatus } from "@prisma/client";
+import { ReservationStatus } from "@/lib/enums";
 import { toast } from "sonner";
 import {
   IconDotsVertical,

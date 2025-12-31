@@ -33,7 +33,7 @@ import * as React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Role } from "@prisma/client";
+import { Role } from "@/lib/enums";
 // import { Label } from "@/components/ui/label"; // Removed as we use FieldLabel
 
 import {

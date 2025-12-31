@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { Role, EquipmentStatus } from "@prisma/client";
+import { Role, EquipmentStatus } from "@/lib/enums";
 import { prisma } from "@/lib/prisma";
 import { ScrapRequestForm } from "@/components/business/scrap-request-form";
 import { Separator } from "@/components/ui/separator";

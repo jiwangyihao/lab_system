@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { Role } from "@prisma/client";
+import { Role } from "@/lib/enums";
 import NewEquipmentPage from "./page.client"; // Client component
 import { getEquipmentAdminsAction } from "@/lib/actions/purchase";
 

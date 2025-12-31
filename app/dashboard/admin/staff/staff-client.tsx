@@ -14,7 +14,7 @@ import {
   IconSchool,
   IconDotsVertical,
 } from "@tabler/icons-react";
-import { Role } from "@prisma/client";
+import { Role } from "@/lib/enums";
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Role } from "@prisma/client";
+import { Role } from "@/lib/enums";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   IconShoppingCart,

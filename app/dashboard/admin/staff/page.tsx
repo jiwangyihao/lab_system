@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { Role } from "@prisma/client";
+import { Role } from "@/lib/enums";
 import { getStaffsAction } from "@/lib/actions/staff";
 import StaffClient from "./staff-client";
 import { Separator } from "@/components/ui/separator";

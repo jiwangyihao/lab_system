@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { Role } from "@prisma/client";
+import { Role } from "@/lib/enums";
 import { getPurchaseRequestsAction } from "@/lib/actions/purchase";
 import { getScrapRequestsAction } from "@/lib/actions/scrap";
 import { getPendingReservations } from "@/lib/actions/reservation";
