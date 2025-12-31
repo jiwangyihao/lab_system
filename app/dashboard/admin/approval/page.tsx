@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import ApprovalClient from "./approval-client";
 
 export const metadata: Metadata = {
-  title: "审批中心 - 实验室设备管理系统",
+  title: "审批中心",
 };
 
 export default async function ApprovalPage() {

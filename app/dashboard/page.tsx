@@ -18,6 +18,7 @@ import {
 } from "@tabler/icons-react";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { Metadata } from "next";
 
 // 角色名称映射
 const ROLE_NAMES: Record<string, string> = {
@@ -54,6 +55,10 @@ interface RecentReservation {
   startTime: Date;
   endTime: Date;
 }
+
+export const metadata: Metadata = {
+  title: "控制台",
+};
 
 export default async function DashboardPage() {
   const session = await auth();
