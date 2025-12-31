@@ -120,7 +120,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
     redirect("/dashboard/reservation");
   }
 
-  const statusConfig = statusMap[reservation.status];
+  const statusConfig = statusMap[reservation.status as ReservationStatus];
   const isExternal = reservation.user.role === Role.OUTSIDER;
 
   return (
