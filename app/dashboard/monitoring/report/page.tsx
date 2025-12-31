@@ -19,10 +19,12 @@ export default async function ReportPage() {
     orderBy: { name: "asc" },
   });
 
-  const formattedEquipment = equipmentList.map((e) => ({
-    id: e.id,
-    name: `${e.name} (${e.model})`,
-  }));
+  const formattedEquipment = equipmentList.map(
+    (e: { id: string; name: string; model: string }) => ({
+      id: e.id,
+      name: `${e.name} (${e.model})`,
+    })
+  );
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
