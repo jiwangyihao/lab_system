@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 
 /**
  * Bootstrap the database with initial data if needed.

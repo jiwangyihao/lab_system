@@ -5,7 +5,7 @@ import {
   changePasswordAction,
 } from "../auth";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { auth } from "@/lib/auth";
 
 // Mock dependencies

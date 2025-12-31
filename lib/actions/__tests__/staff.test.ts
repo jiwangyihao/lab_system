@@ -8,7 +8,7 @@ import {
 } from "../staff";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 
 // Mock dependencies

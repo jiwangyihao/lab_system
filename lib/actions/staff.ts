@@ -9,7 +9,7 @@ import {
   type UpdateStaffInput,
 } from "@/lib/schemas/staff.schema";
 import { Role } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
 /**

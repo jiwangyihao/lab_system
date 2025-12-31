@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { faker } from "@faker-js/faker/locale/zh_CN"; // Use Chinese locale
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 
 const hash = async (pwd: string, salt: number) => bcrypt.hash(pwd, salt);

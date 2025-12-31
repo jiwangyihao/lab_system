@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma, TransactionClient } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {
   registerSchema,
   updateProfileSchema,
