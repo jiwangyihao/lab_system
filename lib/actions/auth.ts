@@ -324,11 +324,17 @@ export async function getTeachersAction(): Promise<
     return {
       success: true,
       message: "获取成功",
-      data: teachers.map((t) => ({
-        id: t.userId,
-        name: t.user.name,
-        department: t.department,
-      })),
+      data: teachers.map(
+        (t: {
+          userId: string;
+          department: string;
+          user: { id: string; name: string };
+        }) => ({
+          id: t.userId,
+          name: t.user.name,
+          department: t.department,
+        })
+      ),
     };
   } catch (error) {
     return {
