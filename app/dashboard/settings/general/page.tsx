@@ -14,7 +14,7 @@ export default async function GeneralSettingsPage() {
 
   const configMap: Record<string, string> = {};
   if (configs) {
-    configs.forEach((c) => {
+    configs.forEach((c: { key: string; value: string }) => {
       configMap[c.key] = c.value;
     });
   }
