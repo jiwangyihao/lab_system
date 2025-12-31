@@ -13,8 +13,17 @@ export const metadata: Metadata = {
   title: "管理制度",
 };
 
+interface Regulation {
+  id: string;
+  title: string;
+  content: string;
+  updatedAt: Date;
+}
+
 export default async function RegulationsPage() {
-  const { data: regulations } = await getRegulations();
+  const { data: regulations } = (await getRegulations()) as {
+    data: Regulation[] | undefined;
+  };
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
