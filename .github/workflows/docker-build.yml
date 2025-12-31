@@ -3,9 +3,6 @@ name: Build Docker Image
 on:
   push:
     branches: ["main", "master"]
-    paths:
-      - "lab_system/**"
-      - ".github/workflows/docker-build.yml"
   workflow_dispatch:
 
 env:
