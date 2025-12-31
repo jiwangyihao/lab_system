@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, TransactionClient } from "@/lib/prisma";
 import {
   createScrapSchema,
   type CreateScrapInput,
@@ -79,7 +79,7 @@ export async function createScrapRequestAction(input: CreateScrapInput) {
     if (existing) return { error: "该设备已有待审批的报废申请" };
 
     // Use transaction to ensure consistency
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       await tx.scrapRequest.create({
         data: {
           applicantId: session.user.id,
@@ -115,7 +115,7 @@ export async function approveScrapRequestAction(id: string) {
   if (session?.user?.role !== Role.HEAD) return { error: "无权操作" };
 
   try {
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       // 1. 更新申请状态
       const request = await tx.scrapRequest.update({
         where: { id },
@@ -163,7 +163,7 @@ export async function rejectScrapRequestAction(id: string, reason: string) {
 
     if (!request) return { error: "申请不存在" };
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       await tx.scrapRequest.update({
         where: { id },
         data: {

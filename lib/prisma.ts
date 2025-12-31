@@ -20,3 +20,8 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // Re-export Role type
 export type { Role };
+
+// Transaction client type for explicit typing in $transaction callbacks
+export type TransactionClient = Parameters<
+  Parameters<typeof prisma.$transaction>[0]
+>[0];

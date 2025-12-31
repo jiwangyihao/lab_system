@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, TransactionClient } from "@/lib/prisma";
 import {
   createPurchaseSchema,
   type CreatePurchaseInput,
@@ -165,7 +165,7 @@ export async function approvePurchaseRequestAction(id: string) {
 
       if (role === Role.HEAD) {
         // HEAD 有权直接终审通过 (跳过 Admin 如果需要，或者 Admin 发起的)
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: TransactionClient) => {
           await tx.purchaseRequest.update({
             where: { id },
             data: { status: RequestStatus.APPROVED },
@@ -204,7 +204,7 @@ export async function approvePurchaseRequestAction(id: string) {
       // 阶段二: 负责人审批
       if (role !== Role.HEAD) return { error: "等待负责人审批" };
 
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: TransactionClient) => {
         await tx.purchaseRequest.update({
           where: { id },
           data: { status: "APPROVED" },

@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma, TransactionClient } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { ReservationStatus, Role } from "@prisma/client";
@@ -243,35 +243,37 @@ export async function createReservation(
     }
 
     // Transaction for conflict detection
-    const reservation = await prisma.$transaction(async (tx) => {
-      // 1. Check Conflicts
-      const conflict = await tx.reservation.findFirst({
-        where: {
-          equipmentId: validated.equipmentId,
-          status: {
-            notIn: [ReservationStatus.REJECTED, ReservationStatus.CANCELLED],
+    const reservation = await prisma.$transaction(
+      async (tx: TransactionClient) => {
+        // 1. Check Conflicts
+        const conflict = await tx.reservation.findFirst({
+          where: {
+            equipmentId: validated.equipmentId,
+            status: {
+              notIn: [ReservationStatus.REJECTED, ReservationStatus.CANCELLED],
+            },
+            startTime: { lt: endDateTime },
+            endTime: { gt: startDateTime },
           },
-          startTime: { lt: endDateTime },
-          endTime: { gt: startDateTime },
-        },
-      });
+        });
 
-      if (conflict) {
-        throw new Error("该时段已被预约");
+        if (conflict) {
+          throw new Error("该时段已被预约");
+        }
+
+        // 2. Create
+        return await tx.reservation.create({
+          data: {
+            userId: user.id,
+            equipmentId: validated.equipmentId,
+            startTime: startDateTime,
+            endTime: endDateTime,
+            usageDesc: validated.usageDesc,
+            status: initialStatus,
+          },
+        });
       }
-
-      // 2. Create
-      return await tx.reservation.create({
-        data: {
-          userId: user.id,
-          equipmentId: validated.equipmentId,
-          startTime: startDateTime,
-          endTime: endDateTime,
-          usageDesc: validated.usageDesc,
-          status: initialStatus,
-        },
-      });
-    });
+    );
 
     revalidatePath("/dashboard/reservation");
     return { success: true, reservationId: reservation.id };
@@ -316,7 +318,7 @@ export async function cancelReservation(
       return { success: false, error: "必须提前24小时以上撤销" };
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       // Update Status
       await tx.reservation.update({
         where: { id: reservationId },
@@ -445,7 +447,7 @@ export async function confirmPayment(reservationId: string) {
     throw new Error("非待支付状态");
   }
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: TransactionClient) => {
     await tx.payment.update({
       where: { reservationId },
       data: {

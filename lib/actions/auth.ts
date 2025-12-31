@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma, TransactionClient } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import {
   registerSchema,
@@ -44,7 +44,7 @@ export async function registerAction(
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
     // 4. 使用事务创建用户和扩展表
-    const user = await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx: TransactionClient) => {
       // 创建主用户记录
       const newUser = await tx.user.create({
         data: {

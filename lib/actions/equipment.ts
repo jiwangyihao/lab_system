@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma, TransactionClient } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import {
@@ -404,7 +404,7 @@ export async function changeEquipmentStatusAction(
     }
 
     // 使用事务更新状态并记录日志
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       // 更新状态
       await tx.equipment.update({
         where: { id },

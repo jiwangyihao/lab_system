@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, TransactionClient } from "@/lib/prisma";
 import { incidentSchema } from "@/lib/schemas/monitoring.schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -189,7 +189,7 @@ export async function checkIn(reservationId: string) {
     }
 
     // 更新预约状态 & 创建 CheckIn 记录
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       await tx.reservation.update({
         where: { id: reservationId },
         data: { status: "IN_USE" },
@@ -252,7 +252,7 @@ export async function checkOut(reservationId: string) {
     });
 
     // 如果找不到 checkIn 记录，可能数据不一致，但我们要允许签退修复状态
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       const now = new Date();
 
       await tx.reservation.update({
@@ -354,7 +354,7 @@ export async function autoExpireCheck() {
 
     const ids = expiredReservations.map((r) => r.id);
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       // 更新 Reservation
       await tx.reservation.updateMany({
         where: { id: { in: ids } },
