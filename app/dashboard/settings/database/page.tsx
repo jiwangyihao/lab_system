@@ -615,13 +615,22 @@ export default function DatabaseSettingsPage() {
               </Button>
               <Button
                 onClick={async () => {
-                  setPreviewOpen(false);
+                  // setPreviewOpen(false); // Do not close immediately to show loading state
                   await handleSeed();
                 }}
                 variant={shouldClear ? "destructive" : "default"}
-                disabled={shouldClear && confirmText !== "RESET"}
+                disabled={(shouldClear && confirmText !== "RESET") || loading}
               >
-                {shouldClear ? "确认重置并应用" : "确认追加数据"}
+                {loading ? (
+                  <>
+                    <IconRefresh className="animate-spin h-4 w-4 mr-2" />
+                    处理中...
+                  </>
+                ) : shouldClear ? (
+                  "确认重置并应用"
+                ) : (
+                  "确认追加数据"
+                )}
               </Button>
             </div>
           </DialogFooter>
