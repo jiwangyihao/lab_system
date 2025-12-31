@@ -55,6 +55,13 @@ export async function seedDatabaseAction(
       await prisma.systemConfig.deleteMany();
       await prisma.ipWhitelist.deleteMany();
 
+      // 先删除用户关联的 profile 表（外键约束）
+      await prisma.teacher.deleteMany({
+        where: { userId: { not: currentUserId } },
+      });
+      await prisma.student.deleteMany();
+      await prisma.outsider.deleteMany();
+
       // 删除除当前用户外的所有用户
       await prisma.user.deleteMany({
         where: {
