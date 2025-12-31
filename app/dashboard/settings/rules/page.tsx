@@ -12,9 +12,18 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { IconSettings } from "@tabler/icons-react";
 
+interface Regulation {
+  id: string;
+  title: string;
+  content: string;
+  updatedAt: Date;
+}
+
 export default async function RulesPage() {
   const session = await auth();
-  const { data: regulations } = await getRegulations();
+  const { data: regulations } = (await getRegulations()) as {
+    data: Regulation[] | undefined;
+  };
 
   const isHead =
     session?.user?.role === "HEAD" || session?.user?.role === "ADMIN";

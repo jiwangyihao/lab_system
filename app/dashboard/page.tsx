@@ -47,6 +47,14 @@ const STATUS_CONFIG: Record<
   COMPLETED: { label: "已完成", variant: "outline" },
 };
 
+interface RecentReservation {
+  id: string;
+  status: string;
+  equipmentName: string;
+  startTime: Date;
+  endTime: Date;
+}
+
 export default async function DashboardPage() {
   const session = await auth();
   const userName = session?.user?.name || "用户";
@@ -64,7 +72,7 @@ export default async function DashboardPage() {
   const stats = statsResult.data;
   const usageData = usageResult.data || [];
   const trendData = trendResult.data || [];
-  const recentReservations = recentResult.data || [];
+  const recentReservations = (recentResult.data || []) as RecentReservation[];
 
   // 判断是否显示管理员相关内容
   const isAdmin = userRole === "ADMIN" || userRole === "HEAD";

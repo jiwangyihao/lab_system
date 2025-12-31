@@ -13,8 +13,19 @@ import { IconPlus, IconEdit, IconArrowLeft } from "@tabler/icons-react";
 import { DeleteRegulationButton } from "./delete-button";
 import { Badge } from "@/components/ui/badge";
 
+interface Regulation {
+  id: string;
+  title: string;
+  order: number;
+  isActive: boolean;
+  updatedAt: Date;
+}
+
 export default async function ManageRulesPage() {
-  const { data: regulations, error } = await getAllRegulationsForAdmin();
+  const { data: regulations, error } = (await getAllRegulationsForAdmin()) as {
+    data: Regulation[] | undefined;
+    error?: string;
+  };
 
   if (error) {
     return <div className="text-destructive">Error: {error}</div>;
