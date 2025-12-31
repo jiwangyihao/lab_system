@@ -130,6 +130,7 @@ export async function seedDatabaseAction(
             studentNo: u.studentNo,
             major: u.major,
             className: u.className,
+            tutorId: u.tutorId,
           },
         };
       } else if (u.role === "OUTSIDER") {
@@ -488,10 +489,13 @@ export async function previewSeedDataAction(customSeed: number = Date.now()) {
         className: `${faker.helpers
           .arrayElement(departments)
           .replace("系", "")}240${faker.number.int({ min: 1, max: 3 })}班`,
+        tutorId: teachers[0]?.id,
+        tutorName: teachers[0]?.name,
       },
     ];
     for (let i = 0; i < 50; i++) {
       const dept = faker.helpers.arrayElement(departments);
+      const tutor = faker.helpers.arrayElement(teachers);
       students.push({
         id: faker.string.uuid(),
         name: faker.person.fullName(),
@@ -505,6 +509,8 @@ export async function previewSeedDataAction(customSeed: number = Date.now()) {
           min: 1,
           max: 3,
         })}班`,
+        tutorId: tutor.id,
+        tutorName: tutor.name,
       });
     }
 
