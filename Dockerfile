@@ -27,6 +27,9 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Skip migration during build for Docker (we use entrypoint for runtime migration)
+ENV SKIP_MIGRATION=1
+
 RUN \
   if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   elif [ -f yarn.lock ]; then yarn run build; \
@@ -57,7 +60,16 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Copy prisma directory for migrations
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Copy entrypoint script
+COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
 USER nextjs
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 EXPOSE 3000
 

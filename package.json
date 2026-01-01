@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
-    "start": "npx prisma migrate deploy && next start",
+    "build": "node scripts/build-manager.js",
+    "start": "prisma migrate deploy && next start",
     "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run"
